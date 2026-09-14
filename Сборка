@@ -1,0 +1,5 @@
+cd tex
+latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error HANNA_theory_stat_phys.tex
+
+cd /home/sanya/edu_materials/tex
+latexmk -xelatex -synctex=1 -interaction=nonstopmode -file-line-error HANNA_theory_stat_phys.tex

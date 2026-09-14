@@ -1,0 +1,322 @@
+% !TEX program = xelatex
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{russian}
+\setotherlanguage{english}
+\setmainfont{DejaVu Serif}
+\newfontfamily\cyrillicfonttt{DejaVu Sans Mono}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+
+\microtypesetup{expansion=false}
+\setlength{\emergencystretch}{3em}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\small\bfseries}{\thesubsubsection}{1em}{}
+
+\geometry{
+    left=25mm,
+    right=20mm,
+    top=25mm,
+    bottom=25mm
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% Стилизованные блоки для справочника
+\newtcolorbox{theorybox}[1]{
+    colback=gray!6!white,
+    colframe=gray!75!black,
+    fonttitle=\bfseries\small,
+    title=#1,
+    arc=1.5mm,
+    boxrule=0.8pt,
+    top=2mm, bottom=2mm, left=3mm, right=3mm
+}
+
+\newtcolorbox{warningbox}[1]{
+    colback=red!4!white,
+    colframe=red!70!black,
+    fonttitle=\bfseries\small,
+    title=#1,
+    arc=1.5mm,
+    boxrule=0.8pt,
+    top=2mm, bottom=2mm, left=3mm, right=3mm
+}
+
+\title{\Large\bfseries Теоретическая физика полимерных и полиэлектролитных интерфейсов:\\
+\large Справочник по иерархии приближений, математическим формулировкам и границам применимости}
+\author{Силюк А.\,К.}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Настоящий документ представляет собой систематический справочник по теоретическим методам описания полимерных и полиэлектролитных систем вблизи межфазных границ, адсорбционных слоев и привитых щеток. Рассматривается полная иерархия подходов: от микроскопической континуальной теории поля и уравнения диффузии Эдвардса до решеточных схем Схойтенса--Флира (SF-SCF), приближения доминирования основного состояния (GSD / уравнение Лифшица), теории сильного растяжения (SST Семенова--Милнера--Виттена--Кейтса) и моделей локальной плотности (LDA / Box models). Для каждого уровня описания формулируются базовые уравнения, термодинамические ансамбли, явный вид граничных условий, математическая структура решений и строгие границы физической применимости.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+\section{Введение и глобальная карта теоретических приближений}
+
+Теоретическое описание пространственно-неоднородных полимерных систем опирается на иерархию моделей различной степени огрубления (табл.~\ref{tab:hierarchy}). Выбор конкретного уровня определяется физической природой задачи: соотношением между контурной длиной цепи $L = Na$, персистентной длиной (длиной Куна $b$), корреляционной длиной плотности $\xi$, дебаевским радиусом экранирования $r_D$ и масштабом внешних неоднородностей.
+
+\begin{table}[ht!]
+\footnotesize
+\centering
+\caption{Иерархия теоретических методов описания полимерных систем}
+\label{tab:hierarchy}
+\begin{tabularx}{\textwidth}{l p{2.8cm} p{4.2cm} X}
+\toprule
+\textbf{Уровень теории} & \textbf{Переменные} & \textbf{Определяющие уравнения} & \textbf{Физический статус / Особенности} \\
+\midrule
+\textbf{0. Field Theory} & Непрерывные поля $\hat{\phi}(\mathbf{r}), w(\mathbf{r}), \psi(\mathbf{r})$ & Континуальный интеграл $\mathcal{Z} = \int \mathcal{D}\phi\mathcal{D}w e^{-\mathcal{H}}$, преобразование Хаббарда--Стратоновича & Точный формализм; включает флуктуации всех масштабов, корреляции и экранирование. \\
+\addlinespace
+\textbf{1. Cont. SCFT} & Пропагаторы $q(\mathbf{r},s)$, поля $w(\mathbf{r})$, потенциал $\psi(\mathbf{r})$ & Диффузионное ур-ние Эдвардса $\partial_s q = \frac{b^2}{6}\nabla^2 q - w q$ + Poisson--Boltzmann & Приближение седловой точки; точный учет энтропии конформаций и натяжения при конечном $N$. \\
+\addlinespace
+\textbf{2. SF-SCF} & Решеточные пропагаторы $G(z,s)$, поля $u(z)$ & Рекурсивные марковские матричные переходы на дискретной сетке & Численно точный дискретный аналог SCFT; явный учет размера мономеров и решеточной энтропии. \\
+\addlinespace
+\textbf{3. GSD (Лифшиц)} & Один параметр порядка $\Psi(\mathbf{r}) = \sqrt{\rho(\mathbf{r})}$ & Нелинейное уравнение Шредингера: $\frac{b^2}{6}\nabla^2 \Psi = (w - \mu)\Psi$ & Асимптотика $N \to \infty$ для делокализованных или свободных цепей; упругость градиентного типа. \\
+\addlinespace
+\textbf{4. SST (Семенов)} & Траектории $x(n)$, натяжение $E(x',x)$, распр. концов $g(x')$ & Предел геометрической оптики для Эдвардса: $\delta F_{elastic} = 0$, интеграл Абеля & Предел предельно растянутых цепей; вырождение флуктуаций вдоль траектории, классические пути. \\
+\addlinespace
+\textbf{5. LDA / Box} & Локальная плотность $\rho(\mathbf{r})$, толщина $H$ & Алгебраический локальный баланс: $\mu_{local}(\rho) + q\psi = \text{const}$ & Полное пренебрежение градиентной конформационной упругостью; масштабно-инвариантные оценки. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{warningbox}{Методологическое предупреждение: Ансамбли и граничные условия}
+Прямой механический перенос уравнений одного уровня теории на другой без учета термодинамического ансамбля ведет к потере физического смысла:
+\begin{itemize}
+    \item \textbf{Большой канонический ансамбль ($\mu VT$):} свободные цепи в контакте с бесконечным резервуаром полимера. В пределе $N \to \infty$ трансляционная энтропия отдельных концов вырождается, и система редуцируется к уравнению Лифшица (GSD) с постоянным химпотенциалом $\mu$.
+    \item \textbf{Канонический ансамбль ($NVT$):} привитые цепи фиксированной длины $N$. Фиксация одного конца на поверхности ($s=0$ при $z=0$) и отсутствие натяжения на втором ($s=N$) создают принципиально неоднородное натяжение вдоль цепи, которое не может быть свернуто в единую моду Лифшица даже при $N \gg 1$.
+\end{itemize}
+\end{warningbox}
+
+\section{Континуальная теория поля и непрерывное SCFT (Уровень 0--1)}
+
+\subsection{Фундаментальный гамильтониан и преобразование Хаббарда--Стратоновича}
+Конформационное состояние системы из $n_p$ гибких полимерных цепей степени полимеризации $N$ задается набором пространственных траекторий $\{\mathbf{R}_i(s)\}$, где $i = 1, \dots, n_p$, а $s \in [0, N]$ --- контурная координата вдоль цепи. Статистическая сумма в непрерывном представлении:
+\begin{equation}
+\mathcal{Z} = \frac{1}{n_p!} \prod_{i=1}^{n_p} \int \mathcal{D}\mathbf{R}_i \exp\left( -\frac{3}{2b^2}\int_0^N ds \left(\frac{d\mathbf{R}_i}{ds}\right)^2 - \frac{\mathcal{H}_{int}[\hat{\rho}_c, \hat{\phi}_p]}{k_B T} \right) \prod_{\mathbf{r}} \delta\left(\hat{\phi}_p(\mathbf{r}) + \hat{\phi}_s(\mathbf{r}) - 1\right),
+\end{equation}
+где микроскопическая объемная доля сегментов определяется через $\hat{\phi}_p(\mathbf{r}) = v \sum_{i=1}^{n_p} \int_0^N ds \, \delta(\mathbf{r} - \mathbf{R}_i(s))$, а взаимодействие $\mathcal{H}_{int}$ включает неэлектростатические объемные взаимодействия (например, параметр Флори--Хаггинса $\chi$) и электростатический кулоновский оператор:
+\begin{equation}
+\mathcal{H}_{Coulomb} = \frac{1}{2} \int d\mathbf{r} d\mathbf{r}' \hat{\rho}_c(\mathbf{r}) \mathcal{C}(\mathbf{r}, \mathbf{r}') \hat{\rho}_c(\mathbf{r}'), \quad -\nabla \cdot [\varepsilon(\mathbf{r}) \nabla \mathcal{C}(\mathbf{r}, \mathbf{r}')] = 4\pi e^2 \delta(\mathbf{r} - \mathbf{r}').
+\end{equation}
+
+Функциональное преобразование Хаббарда--Стратоновича для неэлектростатических взаимодействий и кулоновского поля переводит статистическую сумму к интегрированию по флуктуирующим вспомогательным полям: внешнему химическому потенциалу звеньев $w(\mathbf{r})$, полю давления $\xi(\mathbf{r})$ (множитель Лагранжа несжимаемости) и электростатическому потенциалу $\psi(\mathbf{r}) = e\Phi(\mathbf{r})/k_B T$:
+\begin{equation}
+\mathcal{Z} = \int \mathcal{D}w \, \mathcal{D}\xi \, \mathcal{D}\psi \, \exp\left( -\frac{\mathcal{F}_{field}[w, \xi, \psi]}{k_B T} \right).
+\end{equation}
+
+\subsection{Приближение среднего поля: седловая точка}
+В приближении среднего поля (SCFT) функциональный интеграл оценивается по методу перевала ($\delta \mathcal{F}_{field} = 0$), что приводит к системе замкнутых уравнений для наиболее вероятных конфигураций полей.
+
+\subsection{Уравнение диффузии Эдвардса и пропагаторы}
+В поле $w(\mathbf{r})$ статистический вес цепи длины $s$, оканчивающейся в точке $\mathbf{r}$, удовлетворяет уравнению диффузии в мнимом времени (уравнению Эдвардса):
+\begin{equation}
+\frac{\partial q(\mathbf{r}, s)}{\partial s} = \frac{b^2}{6}\nabla^2 q(\mathbf{r}, s) - w(\mathbf{r}) q(\mathbf{r}, s).
+\label{eq:edwards}
+\end{equation}
+
+\begin{theorybox}{Прямой и обратный пропагаторы}
+В зависимости от граничных условий вводятся два взаимно дополняющих пропагатора:
+\begin{itemize}
+    \item \textbf{Прямой пропагатор $q(\mathbf{r}, s)$:} описывает эволюцию от сегмента $s=0$ к $s$. Для привитой к плоскости $z=0$ щетки начальное условие задается как $q(\mathbf{r}, 0) = \delta(z - z_0)$. Для свободной цепи в растворе: $q(\mathbf{r}, 0) = 1$.
+    \item \textbf{Обратный пропагатор $q_c(\mathbf{r}, s)$:} описывает эволюцию от свободного конца цепи $s=N$ назад к сегменту $s$. Начальное условие: $q_c(\mathbf{r}, N) = 1$.
+\end{itemize}
+Полная объемная доля звеньев в точке $\mathbf{r}$ выражается через свертку пропагаторов:
+\begin{equation}
+\phi_p(\mathbf{r}) = \frac{V}{Q_p} \int_0^N ds \, q(\mathbf{r}, s) q_c(\mathbf{r}, s), \quad Q_p = \int d\mathbf{r} \, q(\mathbf{r}, N).
+\end{equation}
+\end{theorybox}
+
+\section{Решеточная теория Схойтенса--Флира (SF-SCF) (Уровень 2)}
+
+\subsection{Дискретизация оператора Эдвардса на решетке}
+Метод Схойтенса--Флира представляет собой проекцию континуальной теории Эдвардса на пространственную решетку (обычно с координационным числом $Z$ и шагом, равным размеру сегмента $a$).
+
+Непрерывный оператор Лапласа заменяется трехдиагональной матрицей переходов вероятностей случайного блуждания между соседними решеточными слоями. Для одномерной плоской геометрии:
+\begin{equation}
+\langle G(z) \rangle = \lambda_{-1} G(z-1) + \lambda_0 G(z) + \lambda_1 G(z+1),
+\end{equation}
+где для простой кубической решетки коэффициенты перехода равны: $\lambda_{-1} = 1/6$, $\lambda_0 = 4/6$, $\lambda_1 = 1/6$.
+
+\subsection{Рекурсивные соотношения для пропагаторов}
+Дискретным аналогом уравнения диффузии Эдвардса являются рекуррентные матричные соотношения для прямого ($G_f$) и обратного ($G_b$) статистических весов:
+\begin{align}
+G_f(z, s) &= \langle G_f(z, s-1) \rangle \exp(-u(z)), \quad s = 2, \dots, N, \\
+G_b(z, s) &= \langle G_b(z, s+1) \rangle \exp(-u(z)), \quad s = N-1, \dots, 1,
+\end{align}
+где эффективный решеточный потенциал $u(z)$ объединяет лагранжев множитель несжимаемости, электростатический потенциал $\psi(z)$ и локальные взаимодействия Флори--Хаггинса:
+\begin{equation}
+u(z) = u_{comp}(z) + z_p e \psi(z) + \chi \langle \phi(z) \rangle.
+\end{equation}
+
+\subsection{Расчет плотности и схема самосогласования}
+Локальная объемная доля сегментов в слое $z$ находится суммированием по всем позициям мономера в цепи без повторного учета веса слоя:
+\begin{equation}
+\phi(z) = C \sum_{s=1}^N \frac{G_f(z, s) G_b(z, s)}{\exp(-u(z))}.
+\end{equation}
+Система замыкается локальным условием несжимаемости $\phi_p(z) + \phi_s(z) + \sum_\pm \phi_\pm(z) = 1$ и дискретным одномерным уравнением Пуассона:
+\begin{equation}
+\varepsilon \Big( \psi(z+1) - 2\psi(z) + \psi(z-1) \Big) = -4\pi l_B \rho_q(z).
+\end{equation}
+
+\section{Приближение доминирования основного состояния (GSD / Уравнение Лифшица) (Уровень 3)}
+
+\subsection{Спектральное разложение уравнения Эдвардса}
+Поскольку оператор диффузии в правой части~(\ref{eq:edwards}) эрмитов, пропагатор $q(\mathbf{r}, s; \mathbf{r}_0)$ может быть строго представлен в виде разложения по полной ортонормированной системе собственных функций $\{\psi_k(\mathbf{r})\}$:
+\begin{equation}
+\hat{\mathcal{L}}\psi_k(\mathbf{r}) \equiv \left( -\frac{b^2}{6}\nabla^2 + w(\mathbf{r}) \right) \psi_k(\mathbf{r}) = \epsilon_k \psi_k(\mathbf{r}),
+\end{equation}
+\begin{equation}
+q(\mathbf{r}, s; \mathbf{r}_0) = \sum_{k=0}^\infty \psi_k(\mathbf{r})\psi_k^*(\mathbf{r}_0) e^{-\epsilon_k s}.
+\end{equation}
+
+\subsection{Предел бесконечной цепи ($N \to \infty$) для свободных цепей}
+В пределе большой степени полимеризации ($N \to \infty$) в сумме экспоненциально доминирует низший уровень энергии $\epsilon_0 < \epsilon_1 \le \epsilon_2 \dots$:
+\begin{equation}
+q(\mathbf{r}, N; \mathbf{r}_0) \approx \psi_0(\mathbf{r})\psi_0^*(\mathbf{r}_0) e^{-\epsilon_0 N}.
+\end{equation}
+В этом случае плотность полимера определяется квадратом единственной вещественной волновой функции основного состояния:
+\begin{equation}
+\rho(\mathbf{r}) \propto \int_0^N ds \, q(\mathbf{r}, s) q(\mathbf{r}, N-s) \propto \psi_0^2(\mathbf{r}) \equiv \Psi^2(\mathbf{r}).
+\end{equation}
+
+\begin{theorybox}{Уравнение Лифшица--Пуассона в $\mu VT$-ансамбле}
+Для раствора полиэлектролита в $\theta$-растворителе в контакте с резервуаром химпотенциала $\mu$, система SCFT в пределе GSD вырождается в нелинейную замкнутую систему обыкновенных дифференциальных уравнений:
+\begin{align}
+\frac{b^2}{6}\nabla^2 \Psi(\mathbf{r}) &= \Psi(\mathbf{r}) \Big( v_3 \Psi^4(\mathbf{r}) - \alpha \psi(\mathbf{r}) - \mu \Big), \label{eq:lifshitz} \\
+\nabla^2 \psi(\mathbf{r}) &= -4\pi l_B \rho_q[\Psi, \psi]. \label{eq:poisson}
+\end{align}
+\textbf{Следствие:} Упругость макромолекул здесь строго нелокальна и имеет градиентный квантово-механический вид $\frac{b^2}{6}\nabla^2 \Psi$.
+\end{theorybox}
+
+\begin{warningbox}{Неприменимость простого GSD к полимерным щеткам}
+Для полимерной щетки цепи зафиксированы одним концом на поверхности $z=0$: $q(z, 0) = \delta(z)$. Вследствие этого граничного условия проекция начального состояния на спектр оператора $\langle \psi_k | \delta(z) \rangle = \psi_k(0) \neq 0$ возбуждает \textbf{все} собственные моды $k$. Пренебрежение высшими модами эквивалентно потере информации о натяжении цепи и координатах свободных концов.
+\end{warningbox}
+
+\section{Аналитическая теория сильного растяжения (SST / Семенов) (Уровень 4)}
+
+\subsection{Предел геометрической оптики для диффузии цепи}
+Если цепи в слое сильно вытянуты внешним полем или исключенным объемом ($H \gg R_0 \approx b N^{1/2}$), случайное броуновское блуждание вдоль контура подавлено натяжением. Траектории цепей становятся гладкими и квазиклассическими. 
+
+Уравнение Эдвардса переходит в уравнение Гамильтона--Якоби, аналогично переходу от волновой механики Шредингера к классической механике Ньютона:
+\begin{equation}
+\frac{b^2}{6}\nabla^2 q \ll \left| \nabla q \right| \implies \text{траекторное описание цепей } \mathbf{R}(s).
+\end{equation}
+
+\subsection{Функционал свободной энергии растянутого слоя}
+В рамках модели Семенова конформация макромолекулы задается траекторией $x(n)$, где $x$ --- расстояние звена $n$ от подложки. Локальное растяжение задается полем натяжения:
+\begin{equation}
+E(x', x) = \frac{dx}{dn}, \quad \int_0^{x'} \frac{dx}{E(x', x)} = N,
+\end{equation}
+где $x'$ --- координата свободного конца данной цепи.
+Полный конформационный упругий вклад слоя щеток находится интегрированием по распределению концов $g(x')$:
+\begin{equation}
+\frac{F_{elastic}}{k_B T} = \frac{3}{2b^2} \int_0^H dx' \, g(x') \int_0^{x'} dx \, E(x', x).
+\end{equation}
+
+\subsection{Универсальный параболический потенциал}
+Условие термодинамического равновесия свободных концов (равенство вариации свободной энергии нулю $\delta F / \delta E = 0$ и $\delta F / \delta g = 0$) при условии отсутствия натяжения на конце цепи $E(x', x') = 0$ приводит к фундаментальному результату теории Семенова--Милнера--Виттена--Кейтса:
+\begin{theorybox}{Гармоническое самосогласованное поле}
+Эффективное поле внутри полимерной щетки обязано быть строго квадратичным по координате, независимо от конкретного типа взаимодействий:
+\begin{equation}
+U(x) = \frac{3\pi^2}{8 b^2 N^2} (H^2 - x^2), \quad E(x', x) = \frac{\pi}{2N}\sqrt{x'^2 - x^2}.
+\end{equation}
+\end{theorybox}
+
+\subsection{Интегральное уравнение Абеля для распределения концов}
+Плотность мономеров $c_p(x)$ связана с распределением концов $g(x')$ соотношением:
+\begin{equation}
+c_p(x) = \frac{1}{s} \int_x^H \frac{g(x')}{E(x', x)} dx' = \frac{2N}{\pi s} \int_x^H \frac{g(x')}{\sqrt{x'^2 - x^2}} dx'.
+\end{equation}
+Обращение этого уравнения дает точную формулу для функции распределения концов через интеграл Абеля:
+\begin{equation}
+g(x) = \frac{s x}{N} \left( \frac{c_p(H)}{\sqrt{H^2 - x^2}} - \int_x^H \frac{dc_p/dx'}{\sqrt{x'^2 - x^2}} dx' \right).
+\end{equation}
+
+\section{Локальное приближение плотности (LDA) и Box-модели (Уровень 5)}
+
+\subsection{Пренебрежение градиентами конформационной энтропии}
+В приближении локальной плотности (Local Density Approximation, LDA) полностью отбрасываются эффекты конформационной связности мономеров ($\nabla^2 \Psi \to 0$ в уравнении Лифшица или предположение о локальной однородности в уравнении Эдвардса).
+
+Локальная плотность находится из строго локального алгебраического уравнения химического равновесия:
+\begin{equation}
+\mu_{local}(\rho(z)) + \alpha e \psi(z) = \mu_{bulk}.
+\end{equation}
+
+\subsection{Box-модели (Александер--де Жен)}
+Предельный случай пространственного усреднения: щетка рассматривается как однородный блок толщины $H$ с постоянной плотностью $\rho_0 = N/(sH)$. Свободная энергия на цепь минимизируется по параметру $H$:
+\begin{equation}
+\frac{F_{box}}{k_B T} \approx \frac{H^2}{R_0^2} + N f_{int}(\rho_0), \quad \frac{\partial F_{box}}{\partial H} = 0.
+\end{equation}
+
+\section{Сравнительный анализ и межмодельные переходы}
+
+\subsection{Связь между уровнями теории}
+\begin{itemize}
+    \item \textbf{SCFT $\to$ GSD:} Предел $N \to \infty$ при отсутствии граничных условий натяжения (свободные цепи в растворе или адсорбционном слое).
+    \item \textbf{SCFT $\to$ SST:} Предел сильного растяжения $b^2 \nabla^2 \ll \text{натяжение}$; переход от диффузии к классическим траекториям.
+    \item \textbf{GSD $\to$ LDA:} Пренебрежение градиентным членом $\frac{b^2}{6}\Psi'' \ll \mu \Psi$.
+    \item \textbf{SCFT $\to$ SF-SCF:} Дискретизация непрерывного оператора диффузии на решетку с постоянным шагом $a$.
+\end{itemize}
+
+\subsection{Поведение профилей на модельных задачах}
+В таблице~\ref{tab:comparison} сведены качественные различия в поведении ключевых характеристик профилей при описании полимерных межфазных границ на различных уровнях теории.
+
+\begin{table}[ht!]
+\small
+\centering
+\caption{Качественные свойства решений в различных приближениях}
+\label{tab:comparison}
+\begin{tabularx}{\textwidth}{p{3.5cm} X X X}
+\toprule
+\textbf{Физическое явление} & \textbf{LDA / Box} & \textbf{GSD (Лифшиц)} & \textbf{SST (Семенов)} \\
+\midrule
+\textbf{Краевая зона щетки} & Резкая граница (ступенька) & Экспоненциальный спад ($\sim e^{-z/\xi}$) & Степенной спад до нуля в $H$, обрыв \\
+\addlinespace
+\textbf{Обедненный слой у стенки} & Отсутствует ($\rho(0) \neq 0$) & Воспроизводится ($\rho(0) = 0$ через ГУ) & Не воспроизводится без поправок \\
+\addlinespace
+\textbf{Пространственные осцилляции} & Невозможны по теореме о монотонности & Возникают при сцепке с электростатикой & Запрещены топологией $U(x) \propto x^2$ \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Заключение и программа наполнения руководства}
+
+Представленный каркас задает математические и концептуальные рамки для детального аналитического анализа полимерных систем. На последующих этапах каждый раздел будет расширен строгими аналитическими выкладками, явными схемами вариационных процедур и скриптами для численной верификации.
+
+\begin{thebibliography}{99}
+\bibitem{Edwards1965} S.F. Edwards. \textit{The statistical mechanics of polymers with excluded volume}. Proc. Phys. Soc., 85, 613 (1965).
+\bibitem{Lifshitz1968} И.М. Лифшиц. \textit{О некоторых вопросах статистической теории биополимеров}. ЖЭТФ, 55(6), 2408 (1968).
+\bibitem{deGennes1979} P.-G. de Gennes. \textit{Scaling Concepts in Polymer Physics}. Cornell Univ. Press (1979).
+\bibitem{Semenov1985} А.Н. Семенов. \textit{К теории фазового расслоения в растворах блок-сополимеров}. ЖЭТФ, 88(4), 1242 (1985).
+\bibitem{Milner1988} S.T. Milner, T.A. Witten, M.E. Cates. \textit{Theory of the grafted polymer brush}. Macromolecules, 21, 2610 (1988).
+\bibitem{Fleer1993} G.J. Fleer et al. \textit{Polymers at Interfaces}. Chapman \& Hall, London (1993).
+\bibitem{Fredrickson2006} G.H. Fredrickson. \textit{The Equilibrium Theory of Inhomogeneous Polymers}. Oxford Univ. Press (2006).
+\end{thebibliography}
+
+\end{document}

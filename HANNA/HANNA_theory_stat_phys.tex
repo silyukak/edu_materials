@@ -1,0 +1,432 @@
+% !TEX program = xelatex
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{russian}
+\setotherlanguage{english}
+\setmainfont{DejaVu Serif}
+\newfontfamily\cyrillicfonttt{DejaVu Sans Mono}
+\usepackage{amsmath,amssymb,amsfonts,amsthm}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage{cite}
+\usepackage{microtype}
+\microtypesetup{expansion=false}
+\setlength{\emergencystretch}{3em}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+
+\geometry{
+    left=25mm,
+    right=20mm,
+    top=25mm,
+    bottom=25mm
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+\title{\parbox{0.9\textwidth}{\centering\textbf{Термодинамические основы модели HANNA:\
+Уравнение Гиббса--Дюгема, природа избыточной энергии Гиббса и архитектура жестких физических ограничений (Hard Constraints)}}}
+\author{\parbox{0.9\textwidth}{\centering
+Конспект по статье: \textit{HANNA: hard-constraint neural network for consistent activity coefficient prediction}\\
+(Chem. Sci., 2024, 15, 19777--19786, doi: 10.1039/d4sc05115g)}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+\section[Термодинамические основы]{Термодинамические о: потенциал Гиббса и теорема Эйлера}
+
+\subsection{Характеристическая функция \texorpdfstring{$G$}{G} и ее полный дифференциал}
+Рассмотрим гомогенную термодинамическую систему, состоящую из $k$ компонентов. Энергия Гиббса $G$ является характеристической функцией (термодинамическим потенциалом) в переменных: температура $T$, давление $p$ и числа молей компонентов $N_1, N_2, \dots, N_k$:
+\begin{equation}
+    G = G(T, p, N_1, N_2, \dots, N_k)
+\end{equation}
+
+Полный дифференциал $G$ по определению функции нескольких переменных записывается как:
+\begin{equation}
+    dG = \left(\frac{\partial G}{\partial T}\right)_{p, \{N_i\}} dT + \left(\frac{\partial G}{\partial p}\right)_{T, \{N_i\}} dp + \sum_{i=1}^k \left(\frac{\partial G}{\partial N_i}\right)_{T, p, N_{j \neq i}} dN_i
+    \label{eq:dG_def}
+\end{equation}
+
+Используя термодинамические тождества для энтропии $S = -(\partial G / \partial T)_{p,\{N_i\}}$, объема фазы $V = (\partial G / \partial p)_{T,\{N_i\}}$ и определение химического потенциала $i$-го компонента:
+\begin{equation}
+    \mu_i \equiv \left(\frac{\partial G}{\partial N_i}\right)_{T, p, N_{j \neq i}}
+    \label{eq:mu_def}
+\end{equation}
+перепишем выражение~(\ref{eq:dG_def}) в канонической форме дифференциала энергии Гиббса:
+\begin{equation}
+    dG = -S\,dT + V\,dp + \sum_{i=1}^k \mu_i\,dN_i
+    \label{eq:dG_canonical}
+\end{equation}
+
+
+\subsection[Экстенсивные и интенсивные параметры]{Экстенсивные и интенсивные параметры: математический смысл масштабирования}
+В термодинамике параметры состояния строго разделяются по их поведению при изменении размера (масштаба) системы:
+\begin{enumerate}
+    \item \textbf{Экстенсивные переменные (параметры емкости / масштаба):} число частиц (число молей) $N_i$, объем $V$, энтропия $S$, внутренняя энергия $U$, энергия Гиббса $G$. При объединении двух тождественных систем эти величины складываются.
+    \item \textbf{Интенсивные переменные (локальные поля / потенциалы):} температура $T$, давление $p$, химический потенциал $\mu_i$, мольная доля $x_i$, плотность $\rho$. Они не зависят от размера системы и при объединении двух фаз с одинаковыми параметрами остаются неизменными.
+\end{enumerate}
+
+Математически это означает, что энергия Гиббса $G$ является \textbf{однородной функцией первой степени} исключительно относительно переменных состава $\{N_i\}$, в то время как по интенсивным параметрам $T$ и $p$ она имеет нулевую степень однородности:
+\begin{equation}
+    G(T, p, \lambda N_1, \lambda N_2, \dots, \lambda N_k) = \lambda^1 \cdot G(T, p, N_1, N_2, \dots, N_k) \quad \forall \lambda > 0
+    \label{eq:homogeneity}
+\end{equation}
+Параметры $T$ и $p$ не масштабируются коэффициентом $\lambda$, поскольку увеличение геометрического размера системы в $\lambda$ раз при фиксированном состоянии не меняет ее температуру и давление.
+
+
+\subsection{Интегрирование по теореме Эйлера: почему \texorpdfstring{$G = \sum N_i \mu_i$}{G = sum Ni mui}}
+Применим теорему Эйлера об однородных функциях к выражению~(\ref{eq:homogeneity}). Для этого продифференцируем обе части уравнения~(\ref{eq:homogeneity}) по масштабному параметру $\lambda$:
+\begin{equation}
+    \frac{d}{d\lambda} \Big[ G(T, p, \lambda N_1, \dots, \lambda N_k) \Big] = \frac{d}{d\lambda} \Big[ \lambda \cdot G(T, p, N_1, \dots, N_k) \Big]
+    \label{eq:euler_diff}
+\end{equation}
+
+Вычисляем правую часть~(\ref{eq:euler_diff}):
+\begin{equation}
+    \frac{d}{d\lambda} \Big[ \lambda \cdot G(T, p, N_1, \dots, N_k) \Big] = G(T, p, N_1, \dots, N_k)
+\end{equation}
+
+Левую часть~(\ref{eq:euler_diff}) дифференцируем по правилу сложной функции многих переменных:
+\begin{equation}
+    \frac{d}{d\lambda} \Big[ G(T, p, \lambda N_1, \dots) \Big] = \sum_{i=1}^k \left. \frac{\partial G}{\partial (\lambda N_i)} \right|_{T, p} \cdot \frac{\partial (\lambda N_i)}{\partial \lambda} + \left( \frac{\partial G}{\partial T} \right) \underbrace{\frac{\partial T}{\partial \lambda}}_{= 0} + \left( \frac{\partial G}{\partial p} \right) \underbrace{\frac{\partial p}{\partial \lambda}}_{= 0}
+\end{equation}
+Так как $T$ и $p$ не масштабируются при увеличении размера системы, $\frac{\partial T}{\partial \lambda} \equiv 0$ и $\frac{\partial p}{\partial \lambda} \equiv 0$. Производная $\frac{\partial (\lambda N_i)}{\partial \lambda} = N_i$. Следовательно:
+\begin{equation}
+    \sum_{i=1}^k \left. \frac{\partial G}{\partial (\lambda N_i)} \right|_{T, p} \cdot N_i = G(T, p, N_1, \dots, N_k)
+\end{equation}
+
+Полагая масштабный коэффициент $\lambda = 1$ и учитывая термодинамическое определение химического потенциала~(\ref{eq:mu_def}), получаем тождественное соотношение:
+\begin{equation}
+    G = \sum_{i=1}^k N_i \mu_i
+    \label{eq:G_euler_integrated}
+\end{equation}
+
+\textbf{Важное методологическое замечание:} Формула~(\ref{eq:G_euler_integrated}) является \textit{конечным алгебраическим соотношением (уравнением состояния)}, а не дифференциалом. Отсутствие членов с $T$ и $p$ в ней связано не с тем, что $dT=0$ или $dp=0$, а с тем, что $T$ и $p$ являются интенсивными величинами и не участвуют в масштабном преобразовании Эйлера. Зависимость от $T$ и $p$ содержится внутри самих химических потенциалов $\mu_i(T, p, \{x_j\})$.
+
+
+\subsection{Альтернативные пути вывода \texorpdfstring{$G = \sum N_i \mu_i$}{G = sum Ni mui}}
+
+Формула~(\ref{eq:G_euler_integrated}) не является произвольным постулатом; к ней неизбежно приводят и другие аксиоматические построения теоретической физики.
+
+\subsubsection{Подход Каллена: Внутренняя энергия \texorpdfstring{$U$}{U} и преобразование Лежандра}
+Все естественные переменные функции $U$ экстенсивны (включая энтропию и объем):
+\begin{equation}
+    U = U(S, V, N_1, \dots, N_k)
+\end{equation}
+Поскольку $S$, $V$ и $\{N_i\}$ удваиваются при удвоении системы, функция $U$ однородна первой степени по всем своим аргументам:
+\begin{equation}
+    U(\lambda S, \lambda V, \lambda N_1, \dots) = \lambda \cdot U(S, V, N_1, \dots)
+\end{equation}
+Дифференцируя по $\lambda$ при $\lambda = 1$ (теорема Эйлера для $U$):
+\begin{equation}
+    U = \left(\frac{\partial U}{\partial S}\right)_{V,N} S + \left(\frac{\partial U}{\partial V}\right)_{S,N} V + \sum_{i=1}^k \left(\frac{\partial U}{\partial N_i}\right)_{S,V,N_{j\neq i}} N_i
+\end{equation}
+Подставляя термодинамические соотношения $(\partial U/\partial S) = T$, $(\partial U/\partial V) = -p$ и $(\partial U/\partial N_i) = \mu_i$:
+\begin{equation}
+    U = TS - pV + \sum_{i=1}^k N_i \mu_i
+    \label{eq:U_euler}
+\end{equation}
+Энергия Гиббса определяется через преобразование Лежандра от $U$ по переменным $S$ и $V$:
+\begin{equation}
+    G \equiv U - TS + pV
+    \label{eq:G_legendre}
+\end{equation}
+Подставляя выражение~(\ref{eq:U_euler}) в~(\ref{eq:G_legendre}):
+\begin{equation}
+    G = \Big( TS - pV + \sum_{i=1}^k N_i \mu_i \Big) - TS + pV = \sum_{i=1}^k N_i \mu_i
+\end{equation}
+Члены $TS$ и $pV$ взаимно уничтожаются, объясняя структуру энергии Гиббса.
+
+\subsubsection[Статистическая физика]{Статистическая физика: Большой канонический ансамбль}
+В статистической механике открытая система описывается Большим каноническим потенциалом $\Omega(T, V, \{\mu_i\}) = -k_B T \ln \Xi$. 
+\begin{enumerate}
+    \item В силу экстенсивности по объему при фиксированных интенсивных параметрах $T$ и $\mu_i$:
+    \begin{equation}
+        \Omega = -p V
+    \end{equation}
+    \item С другой стороны, по определению преобразования Лежандра свободной энергии Гельмгольца $F(T, V, N)$:
+    \begin{equation}
+        \Omega = F - \sum_{i=1}^k \mu_i N_i
+    \end{equation}
+    \item Приравнивая оба выражения:
+    \begin{equation}
+        -pV = F - \sum_{i=1}^k \mu_i N_i \implies F + pV = \sum_{i=1}^k N_i \mu_i
+    \end{equation}
+\end{enumerate}
+Поскольку $G \equiv F + pV$, мы немедленно получаем $G = \sum_{i=1}^k N_i \mu_i$.
+
+
+\section{Строгий вывод уравнения Гиббса--Дюгема}
+
+Найдем полный дифференциал от интегральной формы энергии Гиббса~(\ref{eq:G_euler_integrated}), считая переменными как количества веществ $N_i$, так и их химические потенциалы $\mu_i$:
+\begin{equation}
+    dG = d\left(\sum_{i=1}^k N_i \mu_i\right) = \sum_{i=1}^k \mu_i\,dN_i + \sum_{i=1}^k N_i\,d\mu_i
+    \label{eq:dG_product_rule}
+\end{equation}
+
+Приравняем два независимых выражения для дифференциала $dG$ — уравнение~(\ref{eq:dG_canonical}) и уравнение~(\ref{eq:dG_product_rule}):
+\begin{equation}
+    -S\,dT + V\,dp + \sum_{i=1}^k \mu_i\,dN_i = \sum_{i=1}^k \mu_i\,dN_i + \sum_{i=1}^k N_i\,d\mu_i
+\end{equation}
+
+Вычитая одинаковый член $\sum_{i=1}^k \mu_i\,dN_i$ из обеих частей равенства, получаем уравнение Гиббса--Дюгема:
+\begin{equation}
+    S\,dT - V\,dp + \sum_{i=1}^k N_i\,d\mu_i = 0
+    \label{eq:gibbs_duhem_general}
+\end{equation}
+
+\subsection{Изотермо-изобарический процесс (\texorpdfstring{$T = \text{const}$}{T = const}, \texorpdfstring{$p = \text{const}$}{p = const})}
+В большинстве задач термодинамики растворов фазовые равновесия рассматриваются при постоянных температуре ($dT = 0$) и давлении ($dp = 0$). Уравнение~(\ref{eq:gibbs_duhem_general}) принимает вид:
+\begin{equation}
+    \sum_{i=1}^k N_i\,d\mu_i = 0 \quad (T, p = \text{const})
+    \label{eq:GD_Tp}
+\end{equation}
+Разделим уравнение~(\ref{eq:GD_Tp}) на полное число молей смеси $N_{\text{tot}} = \sum_{i=1}^k N_i$, переходя к мольным долям компонентов $x_i = N_i / N_{\text{tot}}$:
+\begin{equation}
+    \sum_{i=1}^k x_i\,d\mu_i = 0
+    \label{eq:GD_molar_fractions}
+\end{equation}
+\textbf{Физический смысл:} Химические потенциалы компонентов в растворе не являются независимыми. Изменение состава фазы меняет потенциалы согласованно; невозможно произвольно изменить $\mu_1$, не вызвав строго компенсирующего изменения $\mu_2, \dots, \mu_k$.
+
+\section{Избыточные функции и коэффициенты активности}
+
+\subsection{Химический потенциал реального раствора}
+Для реального раствора химический потенциал компонента $i$ выражается через активность $a_i = x_i \gamma_i$, где $\gamma_i$ — коэффициент активности:
+\begin{equation}
+    \mu_i(T, p, x) = \mu_i^\circ(T, p) + RT \ln a_i = \mu_i^\circ(T, p) + RT \ln x_i + RT \ln \gamma_i
+    \label{eq:mu_real}
+\end{equation}
+где:
+\begin{itemize}
+    \item $\mu_i^{\text{id}} = \mu_i^\circ(T, p) + RT \ln x_i$ — химический потенциал в идеальном растворе;
+    \item $\mu_i^E \equiv RT \ln \gamma_i$ — \textbf{избыточный химический потенциал} (excess chemical potential), описывающий отклонение от идеальности.
+\end{itemize}
+
+\subsection{Молярная избыточная энергия Гиббса \texorpdfstring{$g^E$}{gE}}
+Полная избыточная энергия Гиббса $G^E$ есть разность между реальной и идеальной энергией смеси при тех же $T, p, \{N_i\}$:
+\begin{equation}
+    G^E = G - G^{\text{id}} = \sum_{i=1}^k N_i (\mu_i - \mu_i^{\text{id}}) = \sum_{i=1}^k N_i \mu_i^E = RT \sum_{i=1}^k N_i \ln \gamma_i
+\end{equation}
+Молярная избыточная энергия Гиббса $g^E \equiv G^E / N_{\text{tot}}$ выражается через мольные доли:
+\begin{equation}
+    g^E = RT \sum_{i=1}^k x_i \ln \gamma_i
+    \label{eq:gE_def}
+\end{equation}
+Величина $RT \ln \gamma_i$ представляет собой \textbf{парциальную молярную величину} по отношению к $G^E$:
+\begin{equation}
+    RT \ln \gamma_i = \left(\frac{\partial G^E}{\partial N_i}\right)_{T, p, N_{j \neq i}}
+    \label{eq:partial_molar_gamma}
+\end{equation}
+
+\subsection{Уравнение Гиббса--Дюгема для коэффициентов активности}
+Подставим выражение~(\ref{eq:mu_real}) в уравнение~(\ref{eq:GD_molar_fractions}) при $T, p = \text{const}$ (при этом $d\mu_i^\circ = 0$):
+\begin{equation}
+    \sum_{i=1}^k x_i \Big( d\mu_i^\circ + RT\,d\ln x_i + RT\,d\ln \gamma_i \Big) = 0
+\end{equation}
+\begin{equation}
+    RT \sum_{i=1}^k x_i \frac{dx_i}{x_i} + RT \sum_{i=1}^k x_i\,d\ln \gamma_i = 0 \implies RT \sum_{i=1}^k dx_i + RT \sum_{i=1}^k x_i\,d\ln \gamma_i = 0
+\end{equation}
+Так как сумма мольных долей тождественно равна единице ($\sum x_i = 1$), то дифференциал суммы равен нулю: $\sum dx_i = d(1) = 0$. Деля на $RT$, получаем форму уравнения Гиббса--Дюгема через коэффициенты активности:
+\begin{equation}
+    \sum_{i=1}^k x_i\,d\ln \gamma_i = 0 \quad (T, p = \text{const})
+    \label{eq:GD_gamma}
+\end{equation}
+
+Для бинарной смеси ($k=2$, $x_2 = 1 - x_1$), разделив на дифференциал состава $dx_1$:
+\begin{equation}
+    x_1 \left(\frac{\partial \ln \gamma_1}{\partial x_1}\right)_{T,p} + (1 - x_1)\left(\frac{\partial \ln \gamma_2}{\partial x_1}\right)_{T,p} = 0
+    \label{eq:GD_binary}
+\end{equation}
+Уравнение~(\ref{eq:GD_binary}) в точности совпадает с \textbf{формулой (2)} статьи HANNA.
+
+
+\section{Вывод формул пересчета \texorpdfstring{$g^E \to \ln \gamma_i$}{gE to ln gamma i} (Формула (7) статьи)}
+
+В модели HANNA нейросетевой блок аппроксимирует скалярную молярную функцию $g^E(x_1)$, после чего коэффициенты активности вычисляются по строгим дифференциальным законам термодинамики. Выведем эти соотношения.
+
+\subsection{Вывод выражения для компонента 1}
+По определению парциальной молярной величины~(\ref{eq:partial_molar_gamma}):
+\begin{equation}
+    RT \ln \gamma_1 = \left(\frac{\partial G^E}{\partial N_1}\right)_{T, p, N_2}
+\end{equation}
+Связь между экстенсивной $G^E$ и молярной $g^E$ величиной в бинарной системе:
+\begin{equation}
+    G^E(T, p, N_1, N_2) = (N_1 + N_2) \cdot g^E(x_1), \quad \text{где} \quad x_1 = \frac{N_1}{N_1 + N_2}
+\end{equation}
+
+Применим правило дифференцирования произведения:
+\begin{equation}
+    RT \ln \gamma_1 = \frac{\partial (N_1 + N_2)}{\partial N_1} \cdot g^E(x_1) + (N_1 + N_2) \cdot \frac{\partial g^E(x_1)}{\partial N_1}
+    \label{eq:step_gamma1}
+\end{equation}
+1. Первая производная: $\frac{\partial (N_1 + N_2)}{\partial N_1} = 1$.
+2. Вторая производная берется по правилу дифференцирования сложной функции:
+\begin{equation}
+    \frac{\partial g^E(x_1)}{\partial N_1} = \left(\frac{\partial g^E}{\partial x_1}\right)_{T,p} \cdot \left(\frac{\partial x_1}{\partial N_1}\right)_{N_2}
+\end{equation}
+Вычислим частную производную мольной доли $x_1$ по $N_1$ при фиксированном $N_2$:
+\begin{equation}
+    \left(\frac{\partial x_1}{\partial N_1}\right)_{N_2} = \frac{\partial}{\partial N_1}\left(\frac{N_1}{N_1 + N_2}\right) = \frac{1 \cdot (N_1 + N_2) - N_1 \cdot 1}{(N_1 + N_2)^2} = \frac{N_2}{(N_1 + N_2)^2} = \frac{1 - x_1}{N_1 + N_2}
+\end{equation}
+
+Подставляем полученные результаты в~(\ref{eq:step_gamma1}):
+\begin{equation}
+    RT \ln \gamma_1 = 1 \cdot g^E(x_1) + (N_1 + N_2) \cdot \left(\frac{\partial g^E}{\partial x_1}\right)_{T,p} \cdot \frac{1 - x_1}{N_1 + N_2}
+\end{equation}
+Множитель $(N_1 + N_2)$ аналитически сокращается:
+\begin{equation}
+    RT \ln \gamma_1 = g^E + (1 - x_1)\left(\frac{\partial g^E}{\partial x_1}\right)_{T,p}
+\end{equation}
+Разделив на $RT$, получаем формулу для первого компонента:
+\begin{equation}
+    \ln \gamma_1 = \frac{g^E}{RT} + (1 - x_1) \frac{1}{RT}\left(\frac{\partial g^E}{\partial x_1}\right)_{T,p}
+    \label{eq:ln_gamma_1_final}
+\end{equation}
+
+\subsection{Вывод выражения для компонента 2}
+Аналогично дифференцируем по числу молей $N_2$ при постоянном $N_1$:
+\begin{equation}
+    RT \ln \gamma_2 = \left(\frac{\partial G^E}{\partial N_2}\right)_{T, p, N_1} = \frac{\partial (N_1 + N_2)}{\partial N_2} g^E(x_1) + (N_1 + N_2) \left(\frac{\partial g^E}{\partial x_1}\right)_{T,p} \left(\frac{\partial x_1}{\partial N_2}\right)_{N_1}
+\end{equation}
+Вычислим производную $x_1$ по $N_2$:
+\begin{equation}
+    \left(\frac{\partial x_1}{\partial N_2}\right)_{N_1} = \frac{\partial}{\partial N_2}\left(\frac{N_1}{N_1 + N_2}\right) = -\frac{N_1}{(N_1 + N_2)^2} = -\frac{x_1}{N_1 + N_2}
+\end{equation}
+Подставляем производную:
+\begin{equation}
+    RT \ln \gamma_2 = g^E(x_1) - (N_1 + N_2) \left(\frac{\partial g^E}{\partial x_1}\right)_{T,p} \frac{x_1}{N_1 + N_2} = g^E - x_1 \left(\frac{\partial g^E}{\partial x_1}\right)_{T,p}
+\end{equation}
+Разделив на $RT$:
+\begin{equation}
+    \ln \gamma_2 = \frac{g^E}{RT} - x_1 \frac{1}{RT}\left(\frac{\partial g^E}{\partial x_1}\right)_{T,p}
+    \label{eq:ln_gamma_2_final}
+\end{equation}
+
+Уравнения~(\ref{eq:ln_gamma_1_final}) и~(\ref{eq:ln_gamma_2_final}) образуют \textbf{систему (7)} из статьи HANNA.
+
+
+\section{Доказательство: безусловное выполнение уравнения Гиббса--Дюгема}
+
+Покажем, что величины $\ln \gamma_1$ и $\ln \gamma_2$, полученные по формулам~(\ref{eq:ln_gamma_1_final})--(\ref{eq:ln_gamma_2_final}), тождественно удовлетворяют уравнению Гиббса--Дюгема для любой дважды дифференцируемой функции $g^E(x_1)$.
+
+Для компактности записи введем безразмерную функцию $\Gamma(x_1) \equiv \frac{g^E(x_1)}{RT}$. Обозначим производные по $x_1$:
+\begin{equation}
+    \Gamma' \equiv \frac{\partial \Gamma}{\partial x_1}, \quad \Gamma'' \equiv \frac{\partial^2 \Gamma}{\partial x_1^2}
+\end{equation}
+Тогда выражения~(\ref{eq:ln_gamma_1_final})--(\ref{eq:ln_gamma_2_final}) имеют вид:
+\begin{align}
+    \ln \gamma_1 &= \Gamma + (1 - x_1)\Gamma' \label{eq:gamma1_gamma_form} \\
+    \ln \gamma_2 &= \Gamma - x_1\Gamma' \label{eq:gamma2_gamma_form}
+\end{align}
+
+Дифференцируем каждое уравнение по $x_1$:
+\begin{equation}
+    \frac{\partial \ln \gamma_1}{\partial x_1} = \frac{\partial}{\partial x_1} \Big[ \Gamma + (1 - x_1)\Gamma' \Big] = \Gamma' + \Big[ (-1) \cdot \Gamma' + (1 - x_1)\Gamma'' \Big] = (1 - x_1)\Gamma''
+    \label{eq:dln_gamma1}
+\end{equation}
+\begin{equation}
+    \frac{\partial \ln \gamma_2}{\partial x_1} = \frac{\partial}{\partial x_1} \Big[ \Gamma - x_1\Gamma' \Big] = \Gamma' - \Big[ 1 \cdot \Gamma' + x_1\Gamma'' \Big] = -x_1\Gamma''
+    \label{eq:dln_gamma2}
+\end{equation}
+
+Подставим полученные выражения~(\ref{eq:dln_gamma1}) и~(\ref{eq:dln_gamma2}) в левую часть уравнения Гиббса--Дюгема~(\ref{eq:GD_binary}):
+\begin{align}
+    \text{LHS} &= x_1 \left(\frac{\partial \ln \gamma_1}{\partial x_1}\right) + (1 - x_1)\left(\frac{\partial \ln \gamma_2}{\partial x_1}\right) \nonumber \\
+    &= x_1 \cdot \Big( (1 - x_1)\Gamma'' \Big) + (1 - x_1) \cdot \Big( -x_1\Gamma'' \Big) \nonumber \\
+    &= x_1(1 - x_1)\Gamma'' - x_1(1 - x_1)\Gamma'' \equiv 0
+\end{align}
+
+\textbf{Фундаментальный вывод:} Равенство нулю достигается тождественно, независимо от архитектуры нейронной сети, ее параметров и обучающей выборки. Это гарантирует, что модель HANNA физически непротиворечива в каждой точке пространства состояний.
+
+
+\section{Архитектурная реализация ограничений в модели HANNA}
+
+В отличие от концепции Physics-Informed Neural Networks (PINN), где соблюдение уравнений штрафуется добавлением невязки в функцию потерь (soft constraints), в модели HANNA применен подход Hard Constraints — аналитическая заделка законов физики в вычислительный граф сети.
+
+\begin{figure}[htbp]
+\centering
+\fbox{\parbox{0.95\textwidth}{
+\textbf{Общая схема архитектуры HANNA:}
+\begin{enumerate}
+    \item \textbf{Входные дескрипторы:} SMILES молекул $\to$ ChemBERTa-2 $\to$ эмбеддинги $E_1, E_2 \in \mathbb{R}^{384}$.
+    \item \textbf{Слой сжатия:} $f_\theta(E_i) \in \mathbb{R}^d$ (понижение размерности).
+    \item \textbf{Формирование состояний:} конкатенация $C_1 = [f_\theta(E_1), T^*, x_1]$, $C_2 = [f_\theta(E_2), T^*, 1 - x_1]$.
+    \item \textbf{Симметричное ядро (Deep Sets):} $C_{\text{mix}} = f_\alpha(C_1) + f_\alpha(C_2)$.
+    \item \textbf{Базовый скалярный предиктор:} $g^E_{\text{NN}} = f_\beta(C_{\text{mix}})$.
+    \item \textbf{Физический фильтр жестких ограничений:}
+    $$\frac{g^E}{RT} = g^E_{\text{NN}} \cdot x_1(1 - x_1) \cdot \Big( 1 - \cos\big(f_\theta(E_1), f_\theta(E_2)\big) \Big)$$
+    \item \textbf{Дифференциальный слой (Autograd):} расчет $\ln \gamma_1, \ln \gamma_2$ через частные производные по уравнениям~(\ref{eq:ln_gamma_1_final})--(\ref{eq:ln_gamma_2_final}).
+\end{enumerate}
+}}
+\caption{Вычислительный пайплайн модели HANNA.}
+\end{figure}
+
+\subsection{Ограничение 1: Согласованность по Гиббсу--Дюгему}
+Реализуется механизмом автоматического дифференцирования \texttt{torch.autograd}. Вместо обучения выходов $\ln \gamma_1$ и $\ln \gamma_2$, модель оптимизирует предсказание $g^E$, а коэффициенты активности вычисляются градиентным спуском по графу в соответствии с доказанной в Разделе 5 теоремой.
+
+\subsection[Ограничение 2: Предел чистого вещества]{Ограничение 2: Предел чистого вещества (\texorpdfstring{$\lim_{x_i \to 1} \ln \gamma_i = 0$}{lim xi to 1 ln gamma i = 0})}
+В чистом веществе избыточная энергия Гиббса обязана обращаться в ноль: $g^E(x_1 = 0) = g^E(x_1 = 1) = 0$. 
+Это жестко наложено множителем:
+\begin{equation}
+    \Phi_{\text{pure}}(x_1) = x_1 (1 - x_1)
+\end{equation}
+При $x_1 \to 0$ или $x_1 \to 1$ функция $\Gamma(x_1) \to 0$ со скоростью, достаточной для того, чтобы члены $(1-x_1)\Gamma'$ и $x_1\Gamma'$ также обнуляли соответствующие логарифмы коэффициентов активности.
+
+\subsection{Ограничение 3: Предел псевдобинарной смеси (\texorpdfstring{$A \equiv B$}{A identical to B})}
+Если компоненты 1 и 2 тождественны, система представляет собой чистое вещество при любом соотношении $x_1$. Физически $g^E \equiv 0$ во всем диапазоне составов.
+В HANNA это гарантируется введением фактора косинусного расстояния:
+\begin{equation}
+    \Phi_{\text{ident}} = 1 - \cos\big(f_\theta(E_1), f_\theta(E_2)\big) = 1 - \frac{f_\theta(E_1) \cdot f_\theta(E_2)}{\|f_\theta(E_1)\|_2 \cdot \|f_\theta(E_2)\|_2}
+\end{equation}
+Если молекулы совпадают ($E_1 = E_2$), то векторы коллинеарны, $\cos = 1$, и фактор обращается в строгий ноль: $\Phi_{\text{ident}} \equiv 0 \implies g^E \equiv 0$.
+
+\subsection[Ограничение 4: Перестановочная симметрия]{Ограничение 4: Перестановочная симметрия (Permutation-Equivariance)}
+Физическое состояние бинарной системы инвариантно к нумерации компонентов:
+\begin{equation}
+    \begin{pmatrix} \ln \gamma_1 \\ \ln \gamma_2 \end{pmatrix} (A, B, x_1) = \begin{pmatrix} \ln \gamma_2 \\ \ln \gamma_1 \end{pmatrix} (B, A, 1 - x_1)
+\end{equation}
+Это реализовано с помощью теории Deep Sets: эмбеддинги компонентов суммируются коммутативной операцией:
+\begin{equation}
+    C_{\text{mix}} = f_\alpha(C_1) + f_\alpha(C_2) \equiv f_\alpha(C_2) + f_\alpha(C_1)
+\end{equation}
+Сумма инвариантна к перестановке аргументов, что делает предсказание скаляра $g^E$ строго перестановочно-инвариантным, а вектор градиентов $(\ln \gamma_1, \ln \gamma_2)^T$ — строго перестановочно-эквивариантным.
+
+
+\section{Сводная таблица физических ограничений}
+
+\begin{table}[htbp]
+\centering
+\scriptsize
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}X>{\raggedright\arraybackslash}p{0.28\textwidth}@{}}
+\toprule
+\textbf{Физическое свойство} & \textbf{Математическое условие} & \textbf{Реализация в модели HANNA} \\ \midrule
+\textbf{Уравнение Гиббса--Дюгема} & $x_1 \frac{\partial \ln \gamma_1}{\partial x_1} + x_2 \frac{\partial \ln \gamma_2}{\partial x_1} = 0$ & Вычисление $\ln \gamma_i$ через \texttt{autograd} от $g^E$ \\
+\addlinespace
+\textbf{Предел чистого вещества} & $\lim_{x_i \to 1} \ln \gamma_i = 0$ & Мультипликативный фактор $x_1(1 - x_1)$ \\
+\addlinespace
+\textbf{Тождественность компонентов} & $\ln \gamma_i = 0$, если $A \equiv B$ & Косинусное расстояние $1 - \cos(f_\theta(E_1), f_\theta(E_2))$ \\
+\addlinespace
+\textbf{Перестановочная симметрия} & $\boldsymbol{\gamma}(P(\mathbf{x})) = P(\boldsymbol{\gamma}(\mathbf{x}))$ & Deep Sets: сложение представлений компонентов \\
+\bottomrule
+\end{tabularx}
+\caption{Архитектурное кодирование фундаментальных физических законов в сети HANNA.}
+\end{table}
+
+\end{document}

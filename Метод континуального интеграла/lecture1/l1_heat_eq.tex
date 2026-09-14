@@ -1,0 +1,249 @@
+% !TEX program = xelatex
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{russian}
+\setotherlanguage{english}
+\setmainfont{DejaVu Serif}
+\newfontfamily\cyrillicfonttt{DejaVu Sans Mono}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{cite}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+
+\microtypesetup{expansion=false}
+\setlength{\emergencystretch}{3em}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\small\bfseries}{\thesubsubsection}{1em}{}
+
+\geometry{
+    left=25mm,
+    right=20mm,
+    top=25mm,
+    bottom=25mm
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% Стилизованные блоки для справочника
+\newtcolorbox{theorybox}[1]{
+    colback=gray!6!white,
+    colframe=gray!75!black,
+    fonttitle=\bfseries\small,
+    title=#1,
+    arc=1.5mm,
+    boxrule=0.8pt,
+    top=2mm, bottom=2mm, left=3mm, right=3mm
+}
+
+\newtcolorbox{warningbox}[1]{
+    colback=red!4!white,
+    colframe=red!70!black,
+    fonttitle=\bfseries\small,
+    title=#1,
+    arc=1.5mm,
+    boxrule=0.8pt,
+    top=2mm, bottom=2mm, left=3mm, right=3mm
+}
+
+\title{\textbf{Метод континуального интеграла}\\
+\large Лекция 1: Задача теплопроводности, формула Троттера и интеграл по траекториям}
+\author{Конспект лекции}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Постановка задачи Коши}
+
+Рассматривается задача Коши для диффузионного уравнения (уравнения теплопроводности) с внешним потенциалом $V(q)$ в пространстве $\mathbb{R}^d$:
+\begin{equation}
+    \label{eq:heat_full}
+    \frac{\partial u(t, q)}{\partial t} = \frac{1}{2\sigma^2} \Delta u(t, q) - V(q) u(t, q), \qquad t > 0, \quad q \in \mathbb{R}^d,
+\end{equation}
+с начальным условием:
+\begin{equation}
+    \label{eq:heat_ic}
+    u(0, q) = u_0(q).
+\end{equation}
+
+Здесь:
+\begin{itemize}
+    \item $q = (q_1, q_2, \dots, q_d) \in \mathbb{R}^d$  многомерная координата;
+    \item $\sigma > 0$  параметр (в евклидовой квантовой механике связан с массой $\sigma^2 \sim m/\hbar$);
+    \item $\Delta = \sum\limits_{k=1}^d \frac{\partial^2}{\partial q_k^2}$  оператор Лапласа.
+\end{itemize}
+
+Формально уравнение можно переписать в гамильтоновом виде:
+\begin{equation}
+    \frac{\partial u}{\partial t} = -\hat{H} u, \qquad \hat{H} = -\frac{1}{2\sigma^2}\Delta + V(q).
+\end{equation}
+Тогда решение даётся действием полугруппы: $u(t) = e^{-t\hat{H}} u_0 = e^{t(A+B)}u_0$, где:
+\begin{equation}
+    A = \frac{1}{2\sigma^2} \Delta, \qquad B = -V(q).
+\end{equation}
+
+
+
+\section{Решение вспомогательных подзадач}
+
+Чтобы построить оператор $e^{t(A+B)}$ через формулу расщепления, решим эволюционные задачи для операторов $A$ и $B$ по отдельности.
+
+\subsection{Задача 1: Свободная диффузия ($V \equiv 0$)}
+Рассматривается однородное уравнение теплопроводности:
+\begin{equation}
+    \frac{\partial u_1(t, q)}{\partial t} = \frac{1}{2\sigma^2} \Delta u_1(t, q), \qquad u_1(0, q) = u_{1,0}(q).
+\end{equation}
+Операторно решение записывается как $u_1(t, \cdot) = e^{tA} u_{1,0}(\cdot)$. В явном виде оно задаётся интегралом свёртки с тепловым ядром Гаусса:
+\begin{equation}
+    \label{eq:heat_kernel_sol}
+    u_1(t, q) = \left(\frac{\sigma^2}{2\pi t}\right)^{\!\!d/2} \int_{\mathbb{R}^d} \exp\!\left( -\frac{\sigma^2 \|q - q'\|^2}{2t} \right) u_{1,0}(q')\, dq',
+\end{equation}
+где $\|q - q'\|^2 = \sum\limits_{k=1}^d (q_k - q'_k)^2$, а $dq' = dq'_1 \cdots dq'_d$.
+
+\subsection{Задача 2: Эволюция под действием потенциала}
+Рассматривается уравнение без пространственных производных:
+\begin{equation}
+    \frac{\partial u_2(t, q)}{\partial t} = -V(q) u_2(t, q), \qquad u_2(0, q) = u_{2,0}(q).
+\end{equation}
+Поскольку производных по $q$ нет, пространственная координата $q$ выступает как параметр. Это линейное ОДУ первого порядка, решение которого:
+\begin{equation}
+    u_2(t, q) = e^{-t V(q)} u_{2,0}(q).
+\end{equation}
+Операторно: $u_2(t, \cdot) = e^{tB} u_{2,0}(\cdot)$.
+
+
+
+\section{Формула Троттера и дискретизация по времени}
+
+\begin{theorybox}{Формула Ли--Троттера}
+Для операторов $A$ и $B$ справедливо представление:
+\begin{equation}
+    e^{t(A+B)} = \lim_{n \to \infty} \left( e^{\frac{t}{n}A} e^{\frac{t}{n}B} \right)^{\!\!n}.
+\end{equation}
+\end{theorybox}
+
+Разобьём временной интервал $[0, t]$ на $n$ равных шагов длины $\Delta t = \frac{t}{n}$ узлами:
+\begin{equation}
+    t_k = \frac{k t}{n}, \qquad k = 0, 1, \dots, n \quad (t_0 = 0, \ t_n = t).
+\end{equation}
+Применим операторы последовательно $n$ раз к начальной функции $u_0$:
+\begin{equation}
+    u_n(t, q) = \left( e^{\frac{t}{n}A} e^{\frac{t}{n}B} \right)^{\!\!n} u_0(q).
+\end{equation}
+Каждый множитель $e^{\frac{t}{n}B}$ умножает функцию в точке $q_{k-1}$ на $e^{-\frac{t}{n}V(q_{k-1})}$, а каждый шаг $e^{\frac{t}{n}A}$ усредняет с гауссовым ядром с временным параметром $\Delta t = t/n$.
+
+По теореме Фубини выносим все $n$ интегрирований вперёд:
+\begin{multline}
+    \label{eq:n_integral}
+    u_n(t, q) = \left(\frac{\sigma^2}{2\pi \frac{t}{n}}\right)^{\!\!\frac{nd}{2}} \int_{\mathbb{R}^d} \cdots \int_{\mathbb{R}^d} 
+    \exp\!\left( -\sum_{k=1}^n \frac{\sigma^2 \|q_k - q_{k-1}\|^2}{2(t/n)} - \sum_{k=1}^n V(q_{k-1}) \frac{t}{n} \right) \\
+    \times u_0(q_0) \, dq_0 \, dq_1 \cdots dq_{n-1},
+\end{multline}
+где зафиксирован правый конец траектории:
+\begin{equation}
+    q_n = q.
+\end{equation}
+
+
+
+\section{Предельный переход $n \to \infty$ и интеграл по траекториям}
+
+\subsection{Интерпретация через траектории}
+Набор промежуточных точек интегрирования $\{q_0, q_1, \dots, q_n\}$ можно рассматривать как значения некоторой непрерывной траектории $x \colon [0, t] \to \mathbb{R}^d$ в моменты времени $t_k$:
+\begin{equation}
+    x(t_k) = q_k, \qquad x(t) = x(t_n) = q_n = q, \qquad x(0) = q_0.
+\end{equation}
+
+\subsection{Пределы сумм в показателе экспоненты}
+\paragraph{1. Потенциальное слагаемое:}
+Сумма по потенциалу представляет собой классическую интегральную сумму Римана:
+\begin{equation}
+    \sum_{k=1}^n V(q_{k-1}) \frac{t}{n} = \sum_{k=1}^n V(x(t_{k-1})) \Delta t \xrightarrow[n \to \infty]{} \int_0^t V(x(\tau)) \, d\tau.
+\end{equation}
+
+\paragraph{2. Кинетическое слагаемое (для гладких траекторий):}
+Предположим временно, что траектория $x(\tau)$ дифференцируема. Рассмотрим одномерный случай $d=1$. По теореме Лагранжа о среднем значении:
+\begin{equation}
+    x(t_k) - x(t_{k-1}) = x'(c_k)(t_k - t_{k-1}) = x'(c_k) \frac{t}{n}, \qquad c_k \in (t_{k-1}, t_k).
+\end{equation}
+Тогда сумма преобразуется к виду:
+\begin{equation}
+    \frac{\sigma^2}{2} \sum_{k=1}^n \frac{(x(t_k) - x(t_{k-1}))^2}{t/n} = \frac{\sigma^2}{2} \sum_{k=1}^n \big(x'(c_k)\big)^2 \frac{t}{n} \xrightarrow[n \to \infty]{} \frac{\sigma^2}{2} \int_0^t \|x'(\tau)\|^2 \, d\tau.
+\end{equation}
+
+\subsection{Эвристическая формула Фейнмана}
+Объединяя показатели экспонент, получаем функционал евклидова действия:
+\begin{equation}
+    S_E[x] = \int_0^t \left[ \frac{\sigma^2}{2} \|x'(\tau)\|^2 + V(x(\tau)) \right] d\tau.
+\end{equation}
+Тогда формальный предел интеграла \eqref{eq:n_integral} записывается как \textbf{континуальный интеграл}:
+\begin{equation}
+    \label{eq:feynman_heuristic}
+    u(t, q) = \int\limits_{\substack{x(t)=q \\ x \in C([0, t], \mathbb{R}^d)}} e^{-S_E[x]} u_0(x(0)) \, \mathcal{D}x,
+\end{equation}
+где «дифференциал» $\mathcal{D}x$ мыслится как предельный бесконечномерный аналог меры Лебега:
+\begin{equation}
+    \mathcal{D}x \sim \lim_{n \to \infty} \left(\frac{\sigma^2}{2\pi (t/n)}\right)^{\!\!nd/2} dq_0 \dots dq_{n-1}.
+\end{equation}
+
+\begin{theorybox}{След оператора эволюции и замкнутые траектории}
+Если вычислить след оператора эволюции (статистическую сумму в квантовой статистике), интегрирование ведётся с условием совпадения концов:
+\begin{equation}
+    \mathrm{Tr}\left( e^{-t\hat{H}} \right) = \int_{\mathbb{R}^d} u(t, q)\big|_{u_0 = \delta_q} \, dq = \int\limits_{\substack{x(0)=x(t) \\ x \in C([0,t], \mathbb{R}^d)}} e^{-S_E[x]} \, \mathcal{D}x.
+\end{equation}
+Это интеграл по пространству замкнутых петель.
+\end{theorybox}
+
+
+
+\section{Математические противоречия и мера Винера}
+
+Формула \eqref{eq:feynman_heuristic} невероятно наглядна и физична, однако с точки зрения строгой теории меры наталкивается на фундаментальные препятствия.
+
+\begin{warningbox}{Парадокс бесконечномерного интегрирования}
+\begin{enumerate}
+    \item \textbf{Несуществование трансляционно-инвариантной меры:} В бесконечномерном сепарабельном банаховом пространстве (в частности, в $C([0, t])$) не существует нетривиальной локально конечной меры, инвариантной относительно сдвигов (аналога меры Лебега). Выражение $\mathcal{D}x$ само по себе бессмысленно.
+    \item \textbf{Недифференцируемость траекторий:} Случайные траектории, дающие вклад в интеграл диффузии (траектории броуновского движения), принадлежат пространству $C([0,t])$, но почти наверное \textbf{ни в одной точке не дифференцируемы}. Они не лежат в пространстве Соболева $W_2^1([0,t])$, поэтому интеграл $\int_0^t \|x'(\tau)\|^2 d\tau$ почти наверное равен $+\infty$.
+\end{enumerate}
+\end{warningbox}
+
+\subsection{Строгий выход: формула Фейнмана--Каца}
+Математически корректный подход заключается в том, чтобы не разделять меру $\mathcal{D}x$ и кинетическое слагаемое $\exp\left(-\frac{\sigma^2}{2}\int_0^t \|x'\|^2 d\tau\right)$, а объединить их в единую вероятностную меру  \textbf{условную меру Винера} $W_\sigma^q(dx)$ (меру диффузионного процесса, оканчивающегося в точке $x(t)=q$).
+
+\begin{theorybox}{Формула Фейнмана--Каца}
+Решение задачи теплопроводности \eqref{eq:heat_full}--\eqref{eq:heat_ic} строго задаётся формулой:
+\begin{equation}
+    u(t, q) = \int\limits_{x(t)=q} \exp\!\left( -\int_0^t V(x(\tau))\, d\tau \right) u_0(x(0)) \, W_\sigma^q(dx).
+\end{equation}
+\end{theorybox}
+
+На языке теории случайных процессов это означает вычисление условного математического ожидания относительно винеровского процесса $\xi(\tau)$ с дисперсией, определяемой $\sigma$:
+\begin{equation}
+    u(t, q) = \mathbb{E}\left[ \exp\!\left( -\int_0^t V(\xi(\tau))\, d\tau \right) u_0(\xi(0)) \;\Bigg|\; \xi(t) = q \right].
+\end{equation}
+В частности, при $V \equiv 0$:
+\begin{equation}
+    u(t, q) = \mathbb{E}[ u_0(\xi(0)) \mid \xi(t) = q ] = \int\limits_{x(t)=q} u_0(x(0)) \, W_\sigma^q(dx),
+\end{equation}
+что в точности совпадает со свёрткой \eqref{eq:heat_kernel_sol}. 
+
+Поскольку потенциал $V(x(\tau))$ является непрерывным функционалом на пространстве непрерывных траекторий $C([0, t])$, экспонента $\exp\left(-\int_0^t V(x(\tau))d\tau\right)$ корректно интегрируема по мере Винера, и конструкция становится абсолютно строгой.
+
+\end{document}

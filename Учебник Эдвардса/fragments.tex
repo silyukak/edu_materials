@@ -1,0 +1,630 @@
+% !TEX program = xelatex
+
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{fontspec}
+\usepackage{polyglossia}
+\setmainlanguage{russian}
+\setotherlanguage{english}
+\setmainfont{DejaVu Serif}
+\newfontfamily\cyrillicfonttt{DejaVu Sans Mono}
+\usepackage{amsmath,amssymb,amsfonts,amsthm,mathtools}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{cite}
+\usepackage{microtype}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{hyperref}
+
+\microtypesetup{expansion=false}
+\setlength{\emergencystretch}{3em}
+
+\titleformat{\section}{\large\bfseries}{\thesection}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}{\small\bfseries}{\thesubsubsection}{1em}{}
+
+\geometry{
+    left=25mm,
+    right=20mm,
+    top=25mm,
+    bottom=25mm
+}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    citecolor=blue,
+    urlcolor=blue
+}
+
+% Стилизованные блоки для справочника
+\newtcolorbox{theorybox}[1]{
+    colback=gray!6!white,
+    colframe=gray!75!black,
+    fonttitle=\bfseries\small,
+    title=#1,
+    arc=1.5mm,
+    boxrule=0.8pt,
+    top=2mm, bottom=2mm, left=3mm, right=3mm
+}
+
+\newtcolorbox{warningbox}[1]{
+    colback=red!4!white,
+    colframe=red!70!black,
+    fonttitle=\bfseries\small,
+    title=#1,
+    arc=1.5mm,
+    boxrule=0.8pt,
+    top=2mm, bottom=2mm, left=3mm, right=3mm
+}
+
+\begin{document}
+
+\section*{ГЛАВА 2. РАВНОВЕСНЫЕ СВОЙСТВА ПОЛИМЕРНЫХ ЦЕПЕЙ}
+
+Конформация свободносочлененной цепи представляется набором из $(N + 1)$ векторов положений точек сочленения $\{\boldsymbol{R}_n\} = (\boldsymbol{R}_0 \dots \boldsymbol{R}_N)$, или по-другому~--- набором векторов связей $\{\boldsymbol{r}_n\} = (\boldsymbol{r}_1 \dots \boldsymbol{r}_N)$, где
+\begin{equation}
+\boldsymbol{r}_n = \boldsymbol{R}_n - \boldsymbol{R}_{n-1}, \quad n = 1, 2, \dots, N. \tag{2.1}
+\end{equation}
+Так как векторы связей $\boldsymbol{r}_n$ независимы друг от друга, функция распределения конформаций полимерной цепи запишется в виде
+\begin{equation}
+\Psi(\{\boldsymbol{r}_n\}) = \prod_{n=1}^N \psi(\boldsymbol{r}_n), \tag{2.2}
+\end{equation}
+где $\psi(\boldsymbol{r})$ обозначает случайное распределение вектора постоянной длины $b_0$:
+\begin{equation}
+\psi(\boldsymbol{r}) = \frac{1}{4\pi b_0^2}\delta(|\boldsymbol{r}| - b_0). \tag{2.3}
+\end{equation}
+Это распределение нормировано так, что
+\begin{equation}
+\int \!\mathrm{d}\boldsymbol{r}\,\psi(\boldsymbol{r}) = 1. \tag{2.4}
+\end{equation}
+Чтобы охарактеризовать размер полимерной цепи, рассмотрим вектор между концами цепи $\boldsymbol{R}$, где
+\begin{equation}
+\boldsymbol{R} = \boldsymbol{R}_N - \boldsymbol{R}_0 = \sum_{n=1}^N \boldsymbol{r}_n. \tag{2.5}
+\end{equation}
+Поскольку $\langle\boldsymbol{r}_n\rangle = 0$, то и $\langle\boldsymbol{R}\rangle = 0$, но $\langle\boldsymbol{R}^2\rangle$ имеет конечное значение, которое может быть использовано в качестве характеристики длины цепи. Определим $\overline{R}$ соотношением
+\begin{equation}
+\overline{R} \equiv \langle\boldsymbol{R}^2\rangle^{1/2} = \langle(\boldsymbol{R}_N - \boldsymbol{R}_0)^2\rangle^{1/2}. \tag{2.6}
+\end{equation}
+Используя уравнение (2.5), для $\langle\boldsymbol{R}^2\rangle$ получаем
+\begin{equation}
+\langle\boldsymbol{R}^2\rangle = \sum_{n,m=1}^N \langle\boldsymbol{r}_n \cdot \boldsymbol{r}_m\rangle = \sum_{n=1}^N \langle\boldsymbol{r}_n^2\rangle + 2\sum_{n>m}\langle\boldsymbol{r}_n \cdot \boldsymbol{r}_m\rangle = Nb_0^2, \tag{2.7}
+\end{equation}
+так как при $n \ne m$ $\langle\boldsymbol{r}_n \cdot \boldsymbol{r}_m\rangle = \langle\boldsymbol{r}_m\rangle \cdot \langle\boldsymbol{r}_n\rangle = 0$. Таким образом, $\overline{R}$ дается как
+\begin{equation}
+\overline{R} = \sqrt{N}b_0. \tag{2.8}
+\end{equation}
+
+\subsubsection*{2.1.2. Обобщенные модели случайных блужданий}
+
+Хотя свободносочлененная цепь~--- очень простая модель, основной ее результат $\langle\boldsymbol{R}^2\rangle \propto N$ оказывается справедливым и для более общих моделей. Рассмотрим, например, показанную на рис.~2.2 модель\footnote{В литературе жесткость часто представляется длиной куновского статистического сегмента $b_K$, определяемой как $b_K = \langle\boldsymbol{R}^2\rangle / R_{\max}$, где $R_{\max}$ есть максимальная длина вектора между концами.} \dots
+
+\subsubsection*{2.1.3. Распределение вектора между концами цепи}
+
+В качестве следующего шага рассмотрим распределение вектора, соединяющего концы цепи, для модели случайных блужданий. Пусть $\Phi(\boldsymbol{R}, N)$ есть функция распределения вероятности того, что вектор между концами цепи, состоящей из $N$ связей, равен $\boldsymbol{R}$. Если распределение конформаций описывается функцией $\Psi(\{\boldsymbol{r}_n\})$, то $\Phi(\boldsymbol{R}, N)$ рассчитывается как
+\begin{equation}
+\Phi(\boldsymbol{R}, N) = \int\!\mathrm{d}\boldsymbol{r}_1\int\!\mathrm{d}\boldsymbol{r}_2 \dots \int\!\mathrm{d}\boldsymbol{r}_N \, \delta\left(\boldsymbol{R} - \sum_{n=1}^N \boldsymbol{r}_n\right)\Psi(\{\boldsymbol{r}_n\}), \tag{2.18}
+\end{equation}
+что можно переписать, используя тождество
+\begin{equation}
+\delta(\boldsymbol{r}) = \frac{1}{(2\pi)^3}\int\!\mathrm{d}\boldsymbol{k}\,\mathrm{e}^{i\boldsymbol{k}\cdot\boldsymbol{r}}, \tag{2.19}
+\end{equation}
+в виде
+\begin{equation}
+\Phi(\boldsymbol{R}, N) = \frac{1}{(2\pi)^3}\int\!\mathrm{d}\boldsymbol{k}\int\!\mathrm{d}\boldsymbol{r}_1\int\!\mathrm{d}\boldsymbol{r}_2 \dots \int\!\mathrm{d}\boldsymbol{r}_N \times \exp\left(ik\cdot\left(\boldsymbol{R} - \sum_{n=1}^N \boldsymbol{r}_n\right)\right)\Psi(\{\boldsymbol{r}_n\}). \tag{2.20}
+\end{equation}
+Для свободносочлененной цепи уравнения (2.2) и (2.20) дают
+\begin{align}
+\Phi(\boldsymbol{R}, N) &= \frac{1}{(2\pi)^3}\int\!\mathrm{d}\boldsymbol{k}\,\mathrm{e}^{i\boldsymbol{k}\cdot\boldsymbol{R}}\int\!\mathrm{d}\boldsymbol{r}_1 \dots \mathrm{d}\boldsymbol{r}_N \prod_{n=1}^N \exp(-i\boldsymbol{k}\cdot\boldsymbol{r}_n)\psi(\boldsymbol{r}_n) = \nonumber\\
+&= \frac{1}{(2\pi)^3}\int\!\mathrm{d}\boldsymbol{k}\,\mathrm{e}^{i\boldsymbol{k}\cdot\boldsymbol{R}}\left[\int\!\mathrm{d}\boldsymbol{r}\exp(-i\boldsymbol{k}\cdot\boldsymbol{r})\psi(\boldsymbol{r})\right]^N. \tag{2.21}
+\end{align}
+Интеграл по $\boldsymbol{r}$ оценивают, вводя полярные координаты $(r, \theta, \phi)$; причем ось отсчета для $\theta$ выбирают вдоль вектора $\boldsymbol{k}$, что дает
+\begin{align}
+\int\!\mathrm{d}\boldsymbol{r}\exp(-i\boldsymbol{k}\cdot\boldsymbol{r})\psi(\boldsymbol{r}) &= \frac{1}{4\pi b^2}\int_0^\infty\!\mathrm{d}r\,r^2\int_0^{2\pi}\!\mathrm{d}\phi\int_0^\pi\!\mathrm{d}\theta\sin\theta\exp(-ikr\cos\theta)\delta(r-b) = \nonumber\\
+&= \frac{\sin kb}{kb}, \tag{2.22}
+\end{align}
+где $k = |\boldsymbol{k}|$, а $b_0$ заменяется на $b$ (так как $b_0 = b$ для свободносочлененной цепи). Из уравнений (2.21) и (2.22) имеем
+\begin{equation}
+\Phi(\boldsymbol{R}, N) = \frac{1}{(2\pi)^3}\int\!\mathrm{d}\boldsymbol{k}\,\mathrm{e}^{i\boldsymbol{k}\cdot\boldsymbol{R}}\left(\frac{\sin kb}{kb}\right)^N. \tag{2.23}
+\end{equation}
+
+Если $N$ велико, $((\sin kb)/kb)^N$ становится очень малым при условии, что $kb$ мало. При $kb \ll 1$ $((\sin kb)/kb)^N$ можно аппроксимировать в виде
+\begin{equation}
+\left(\frac{\sin kb}{kb}\right)^N = \left(1 - \frac{k^2 b^2}{6}\right)^N = \exp\left(-\frac{Nk^2 b^2}{6}\right). \tag{2.24}
+\end{equation}
+Это приближение выполняется также и при $kb \gg 1$, так как в этом случае обе части уравнения (2.24) приблизительно равны нулю. Таким образом, $\Phi(\boldsymbol{R}, N)$ рассчитывается как
+\begin{equation}
+\Phi(\boldsymbol{R}, N) = \frac{1}{(2\pi)^3}\int\!\mathrm{d}\boldsymbol{k}\,\mathrm{e}^{i\boldsymbol{k}\cdot\boldsymbol{R}}\exp\left(-\frac{Nk^2 b^2}{6}\right). \tag{2.25}
+\end{equation}
+Интеграл по $\boldsymbol{k}$ является стандартным гауссовым интегралом. (Сводка некоторых полезных гауссовых интегралов приведена в приложении~2.I.) Если $k_\alpha$ и $R_\alpha$ ($\alpha = x, y, z$) обозначают компоненты векторов $\boldsymbol{k}$ и $\boldsymbol{R}$, то, используя уравнение (2.I.2), имеем
+\begin{align}
+\Phi(\boldsymbol{R}, N) &= (2\pi)^{-3}\prod_{\alpha=x,y,z}\left[\int_{-\infty}^\infty\!\mathrm{d}k_\alpha\exp(ik_\alpha R_\alpha - Nk_\alpha^2 b^2/6)\right] = \nonumber\\
+&= (2\pi)^{-3}\prod_{\alpha=x,y,z}\left(\frac{6\pi}{Nb^2}\right)^{1/2}\exp\left(-\frac{3}{2Nb^2}R_\alpha^2\right) = \nonumber\\
+&= (3/2\pi Nb^2)^{3/2}\exp\left(-\frac{3\boldsymbol{R}^2}{2Nb^2}\right). \tag{2.26}
+\end{align}
+Таким образом, функция распределения вектора между концами является гауссовой.
+
+Распределение (2.26) имеет ту искусственно возникшую особенность, что $|\boldsymbol{R}|$ может быть больше максимальной длины вытянутой цепи $Nb$. В литературе [1, 2, 4] можно найти более реалистичную функцию распределения, которая не имеет этой особенности. В этой книге, однако, такие сильно вытянутые состояния полимерных цепей не рассматриваются, и выражения (2.26) для наших целей достаточно.
+
+Хотя вышеприведенный вывод проделан для свободносочлененной цепи, полученный результат справедлив и в более общем случае. Вообще можно показать, что, когда распределение конформаций описывается формулой (2.15), распределение вектора между концами $\boldsymbol{R}$ длинной цепи ($N \gg 1$) дается выражением (2.26).
+
+\begin{center}
+\textit{Рис. 2.3. Цепь, разделенная на $\bar{N}$ субмолекул.}
+\end{center}
+
+Этот результат следует из центральной предельной теоремы в математической статистике [5].
+
+Для доказательства этого предположим, что цепь разделена на $\bar{N}$ субмолекул, каждая из которых содержит $\lambda$ связей (рис.~2.3). Ясно, что
+\begin{equation}
+\bar{N} = N/\lambda. \tag{2.27}
+\end{equation}
+Пусть $\bar{\boldsymbol{r}}_n$ есть вектор между концами $n$-й субмолекулы. Вектор между концами всей цепи запишется как
+\begin{equation}
+\boldsymbol{R} = \sum_{n=1}^{\bar{N}}\bar{\boldsymbol{r}}_n. \tag{2.28}
+\end{equation}
+Теперь если $N$ очень велико, то и $\bar{N}$, и $\lambda$ могут быть взяты достаточно большими, так что $\bar{N} \gg 1$ и $\lambda \gg 1$. Если $\lambda \gg 1$, то векторы $\bar{\boldsymbol{r}}_n$ становятся независимыми друг от друга, и распределение $\{\bar{\boldsymbol{r}}_n\}$ можно записать как
+\begin{equation}
+\Psi(\{\bar{\boldsymbol{r}}_n\}) = \prod_{n=1}^{\bar{N}}\bar{\psi}(\bar{\boldsymbol{r}}_n). \tag{2.29}
+\end{equation}
+При выводе распределения $\boldsymbol{R}$ из уравнений (2.28) и (2.29) не требуется знания действительного вида функции $\bar{\psi}(\bar{\boldsymbol{r}})$. Вновь используя тождества (2.21) и (2.29), имеем
+\begin{equation}
+\Phi(\boldsymbol{R}, N) = \frac{1}{(2\pi)^3}\int\!\mathrm{d}\boldsymbol{k}\,\mathrm{e}^{i\boldsymbol{k}\cdot\boldsymbol{R}}A(k)^{\bar{N}}, \tag{2.30}
+\end{equation}
+где
+\begin{equation}
+A(k) = \int\!\mathrm{d}\boldsymbol{r}\exp(-i\boldsymbol{k}\cdot\boldsymbol{r})\bar{\psi}(\boldsymbol{r}). \tag{2.31}
+\end{equation}
+Так как $\bar{\psi}(\boldsymbol{r})$ зависит только от $|\boldsymbol{r}|$, интегрирование по направлению $\boldsymbol{r}$ может быть выполнено:
+\begin{align}
+A(k) &= \int_0^\infty\!\mathrm{d}r\,r^2\int_0^\pi\!\mathrm{d}\theta\sin\theta\int_0^{2\pi}\!\mathrm{d}\phi\exp(-ikr\cos\theta)\bar{\psi}(r) = \nonumber\\
+&= \int_0^\infty\!\mathrm{d}r\,4\pi r^2\frac{\sin kr}{kr}\bar{\psi}(r) = \left\langle\frac{\sin kr}{kr}\right\rangle_{\!\bar{\psi}}, \tag{2.32}
+\end{align}
+где
+\begin{equation}
+\langle\dots\rangle_{\bar{\psi}} \equiv \int_0^\infty\!\mathrm{d}r\,4\pi r^2\bar{\psi}(r)\dots \tag{2.33}
+\end{equation}
+Поскольку нас интересует область малых $k$, мы можем оценить $A(k)$, разлагая $(\sin kr)/kr$ в ряд по $k$:
+\begin{equation}
+A(k) = \left\langle 1 - \frac{1}{6}k^2 r^2 + \dots\right\rangle_{\!\bar{\psi}} = 1 - \frac{1}{6}k^2\langle r^2\rangle_{\bar{\psi}}. \tag{2.34}
+\end{equation}
+При $\lambda \gg 1$ $\langle r^2\rangle_{\bar{\psi}}$ дается выражением $\lambda b^2$, откуда
+\begin{equation}
+A(k) = 1 - \frac{1}{6}\lambda b^2 k^2. \tag{2.35}
+\end{equation}
+Тогда $\Phi(\boldsymbol{R}, N)$ оценивается как
+\begin{align}
+\Phi(\boldsymbol{R}, N) &= \frac{1}{(2\pi)^3}\int\!\mathrm{d}\boldsymbol{k}\,\mathrm{e}^{i\boldsymbol{k}\cdot\boldsymbol{R}}\left(1 - \frac{1}{6}\lambda b^2 k^2\right)^{\bar{N}} = \nonumber\\
+&= \frac{1}{(2\pi)^3}\int\!\mathrm{d}\boldsymbol{k}\,\mathrm{e}^{i\boldsymbol{k}\cdot\boldsymbol{R}}\exp\left(-\frac{1}{6}\lambda\bar{N}b^2 k^2\right) = \nonumber\\
+&= \left(\frac{3}{2\pi\lambda\bar{N}b^2}\right)^{3/2}\exp\left(-\frac{3\boldsymbol{R}^2}{2\lambda\bar{N}b^2}\right). \tag{2.36}
+\end{align}
+Поскольку $\lambda\bar{N} = N$, формула (2.36) полностью согласуется с выражением (2.26).
+
+\subsection*{2.2. ГАУССОВА ЦЕПЬ}
+
+Мы убедились, что в статистическом распределении вектора между концами локальная структура цепи проявляется только через эффективную длину связи $b$. В общем случае справедливо утверждение: локальная структура цепи определяет только эффективную длину последней и никаким другим путем в рассматриваемой проблеме не проявляется. Поэтому если мы интересуемся общими свойствами полимеров, мы можем исходить из простейшей допустимой модели.
+
+Рассмотрим цепь, в которой длина связи имеет гауссово распределение:
+\begin{equation}
+\psi(\boldsymbol{r}) = \left[\frac{3}{2\pi b^2}\right]^{3/2}\exp\left(-\frac{3\boldsymbol{r}^2}{2b^2}\right), \tag{2.37}
+\end{equation}
+так что
+\begin{equation}
+\langle\boldsymbol{r}^2\rangle = b^2. \tag{2.38}
+\end{equation}
+Функция распределения конформаций такой цепи дается выражением
+\begin{align}
+\Psi(\{\boldsymbol{r}_n\}) &= \prod_{n=1}^N\left[\frac{3}{2\pi b^2}\right]^{3/2}\exp\left[-\frac{3\boldsymbol{r}_n^2}{2b^2}\right] = \nonumber\\
+&= \left[\frac{3}{2\pi b^2}\right]^{3N/2}\exp\left[-\sum_{n=1}^N\frac{3(\boldsymbol{R}_n - \boldsymbol{R}_{n-1})^2}{2b^2}\right]. \tag{2.39}
+\end{align}
+Подобная цепь называется гауссовой. Гауссова цепь не описывает строго локальную структуру полимера, но правильно воспроизводит его свойства на больших масштабах длин. Основное преимущество гауссовой цепи как модели заключается в том, что математически с нею оперировать гораздо легче, чем с любой из моделей, рассмотренных в разд.~2.1.
+
+Гауссова цепь часто представляется механической моделью (рис.~2.4); принимается, что $(N + 1)$ «бусинок» связаны гармонической пружиной, потенциальная энергия которой дается выражением
+\begin{equation}
+U_0(\{\boldsymbol{R}_n\}) = \frac{3}{2b^2}k_B T \sum_{n=1}^N(\boldsymbol{R}_n - \boldsymbol{R}_{n-1})^2. \tag{2.40}
+\end{equation}
+В равновесии больцмановское распределение в рамках такой модели в точности то же самое, что и в формуле (2.39).
+
+Важным свойством гауссовой цепи является то, что распределение вектора $\boldsymbol{R}_n - \boldsymbol{R}_m$ между любыми двумя единицами $n$ и $m$ является гауссовым и дается выражением
+\begin{equation}
+\Phi(\boldsymbol{R}_n - \boldsymbol{R}_m,\, n - m) = \left[\frac{3}{2\pi b^2 |n - m|}\right]^{3/2}\exp\left[-\frac{3(\boldsymbol{R}_n - \boldsymbol{R}_m)^2}{2|n - m|b^2}\right]. \tag{2.41}
+\end{equation}
+Это следует из свойств гауссова интеграла (см. приложение~2.I). Соответственно при любых $n$ и $m$
+\begin{equation}
+\langle(\boldsymbol{R}_n - \boldsymbol{R}_m)^2\rangle = |n - m|b^2. \tag{2.42}
+\end{equation}
+Индекс $n$ для гауссовой цепи часто рассматривается как непрерывная переменная. В этом случае $\boldsymbol{R}_n - \boldsymbol{R}_{n-1}$ заменяется на $\partial\boldsymbol{R}_n/\partial n$, и выражение (2.39) записывается как
+\begin{equation}
+\Psi[\boldsymbol{R}_n] = \text{const}\,\exp\left[-\frac{3}{2b^2}\int_0^N\!\mathrm{d}n\left(\frac{\partial\boldsymbol{R}_n}{\partial n}\right)^2\right]. \tag{2.43}
+\end{equation}
+Это распределение известно как распределение Винера.
+
+Математически существует некая тонкость при переходе от дискретного $n$ к непрерывному, но для наших целей достаточно понимать, что уравнение (2.43) является лишь иной формальной записью выражения (2.39). В этой книге дискретное и непрерывное $n$ рассматриваются как взаимозаменяемые. Правила перехода от дискретных переменных к непрерывным суммированы в табл.~2.1.
+
+\begin{table}[h!]
+\centering
+\caption*{Таблица 2.1}
+\begin{tabular}{ccc}
+\toprule
+Дискретное $n$ & & Непрерывное $n$ \\
+\midrule
+$\displaystyle\sum_{n=k_1}^{k_2}$ & $\to$ & $\displaystyle\int_{k_1}^{k_2}\!\mathrm{d}n$ \\
+$\boldsymbol{R}_n - \boldsymbol{R}_{n-1}$ & $\to$ & $\partial\boldsymbol{R}_n/\partial n$ \\
+$\boldsymbol{R}_{n+1} + \boldsymbol{R}_{n-1} - 2\boldsymbol{R}_n$ & $\to$ & $\partial^2\boldsymbol{R}_n/\partial n^2$ \\
+$\delta_{nm}$ Дельта Кронекера & $\to$ & $\delta(n - m)$ Дельта-функция Дирака \\
+$\displaystyle\frac{\partial}{\partial\boldsymbol{R}_n}$ & $\to$ & $\displaystyle\frac{\delta}{\delta\boldsymbol{R}_n}{}^{*)}$ \\
+$\displaystyle\int\prod\mathrm{d}\boldsymbol{R}_n$ & $\to$ & $\displaystyle\int\!\delta\boldsymbol{R}_n{}^{**)}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+\noindent\footnotesize{${}^{*), **)}$ Эти символы относятся к функциональным производной и интегралу соответственно. В принятых обозначениях они записываются как $\delta/\delta\boldsymbol{R}(n)$ и $\int\!\delta\boldsymbol{R}(n)$, чтобы подчеркнуть, что $\boldsymbol{R}$ есть функция непрерывной переменной $n$. Однако, поскольку здесь дискретное и непрерывное представления взаимозаменяемы, мы используем символ $\boldsymbol{R}_n$ в обоих представлениях.}
+
+\normalsize
+
+\subsection*{2.3. КОНФОРМАЦИЯ ЦЕПИ ВО ВНЕШНЕМ ПОЛЕ}
+
+\subsubsection*{2.3.1. Функция Грина}
+
+Если имеется внешнее поле $U_e(\boldsymbol{r})$, действующее на каждый сегмент, то равновесное распределение гауссовой цепи видоизменяется с учетом множителя Больцмана:
+\begin{equation}
+\exp\left[-\frac{1}{k_B T}\int_0^N\!\mathrm{d}n\,U_e(\boldsymbol{R}_n)\right], \tag{2.44}
+\end{equation}
+и конформационная функция распределения приобретает вид
+\begin{equation}
+\Psi[\boldsymbol{R}_n] \propto \exp\left[-\frac{3}{2b^2}\int_0^N\!\mathrm{d}n\left(\frac{\partial\boldsymbol{R}_n}{\partial n}\right)^2 - \frac{1}{k_B T}\int_0^N\!\mathrm{d}n\,U_e(\boldsymbol{R}_n)\right]. \tag{2.45}
+\end{equation}
+При рассмотрении статистических свойств такой системы удобно ввести функцию Грина, определяемую соотношением [6, 7]:
+\begin{equation}
+G(\boldsymbol{R}, \boldsymbol{R}'; N) \equiv \frac{\displaystyle\int_{\boldsymbol{R}_0 = \boldsymbol{R}'}^{\boldsymbol{R}_N = \boldsymbol{R}}\!\delta\boldsymbol{R}_n\exp\left[-\frac{3}{2b^2}\int_0^N\!\mathrm{d}n\left(\frac{\partial\boldsymbol{R}_n}{\partial n}\right)^2 - \frac{1}{k_B T}\int_0^N\!\mathrm{d}n\,U_e(\boldsymbol{R}_n)\right]}{\displaystyle\int\!\mathrm{d}\boldsymbol{R}\int_{\boldsymbol{R}_0 = \boldsymbol{R}'}^{\boldsymbol{R}_N = \boldsymbol{R}}\!\delta\boldsymbol{R}_n\exp\left[-\frac{3}{2b^2}\int_0^N\!\mathrm{d}n\left(\frac{\partial\boldsymbol{R}_n}{\partial n}\right)^2\right]}, \tag{2.46}
+\end{equation}
+где $\boldsymbol{R}_N = \boldsymbol{R}$ и $\boldsymbol{R}_0 = \boldsymbol{R}'$ в функциональном интеграле означает, что интеграл берется по всем конформациям, которые начинаются в $\boldsymbol{R}'$ и заканчиваются в $\boldsymbol{R}$. (Заметим, что знаменатель в уравнении (2.46) не зависит от $\boldsymbol{R}$ и $\boldsymbol{R}'$.)
+
+При $U_e = 0$ $G(\boldsymbol{R}, \boldsymbol{R}'; N)$ сводится к гауссовой функции распределения
+\begin{equation}
+G(\boldsymbol{R} - \boldsymbol{R}'; N) = \left(\frac{2\pi N b^2}{3}\right)^{-3/2}\exp\left(-\frac{3(\boldsymbol{R} - \boldsymbol{R}')^2}{2Nb^2}\right). \tag{2.47}
+\end{equation}
+
+\begin{center}
+\textit{Рис. 2.5. Цепь, которая начинается в $\boldsymbol{R}'$, проходит через $\boldsymbol{R}''$ за $n$ шагов и заканчивается в $\boldsymbol{R}$ за $N$ шагов.}
+\end{center}
+
+В общем случае при $U_e \ne 0$ $G(\boldsymbol{R}, \boldsymbol{R}'; N)$ представляет статистический вес (или статистическую сумму) цепи, которая выходит из $\boldsymbol{R}'$ и заканчивается в $\boldsymbol{R}$ за $N$ шагов. Статистический вес для всех возможных конформаций дается выражением
+\begin{equation}
+Z = \int\!\mathrm{d}\boldsymbol{R}\,\mathrm{d}\boldsymbol{R}'\,G(\boldsymbol{R}, \boldsymbol{R}'; N). \tag{2.48}
+\end{equation}
+Из определения $G(\boldsymbol{R}, \boldsymbol{R}'; N)$ вытекает справедливость следующего тождества:
+\begin{equation}
+G(\boldsymbol{R}, \boldsymbol{R}'; N) = \int\!\mathrm{d}\boldsymbol{R}''\,G(\boldsymbol{R}, \boldsymbol{R}''; N - n)G(\boldsymbol{R}'', \boldsymbol{R}'; n) \quad (\text{при } 0 < n < N). \tag{2.49}
+\end{equation}
+Физический смысл этого соотношения ясен. Множитель $G(\boldsymbol{R}, \boldsymbol{R}''; N - n)G(\boldsymbol{R}'', \boldsymbol{R}'; n)$ представляет собой статистический вес цепи, которая начинается в $\boldsymbol{R}'$, проходит через $\boldsymbol{R}''$ за $n$ шагов и заканчивается в $\boldsymbol{R}$ за $N$ шагов (рис.~2.5). Интегрирование этого статистического веса по всем $\boldsymbol{R}''$ дает статистический вес цепи, которая начинается в $\boldsymbol{R}'$ и заканчивается в $\boldsymbol{R}$.
+
+Если $G(\boldsymbol{R}, \boldsymbol{R}'; N)$ известна, то легко рассчитать среднее значение любой физической величины $A$. Если $A$ зависит только от положения $n$-го сегмента, то
+\begin{equation}
+\langle A(\boldsymbol{R}_n)\rangle = \frac{\displaystyle\int\!\mathrm{d}\boldsymbol{R}_N\mathrm{d}\boldsymbol{R}_n\mathrm{d}\boldsymbol{R}_0\,G(\boldsymbol{R}_N, \boldsymbol{R}_n; N - n)G(\boldsymbol{R}_n, \boldsymbol{R}_0; n)A(\boldsymbol{R}_n)}{\displaystyle\int\!\mathrm{d}\boldsymbol{R}_N\mathrm{d}\boldsymbol{R}_0\,G(\boldsymbol{R}_N, \boldsymbol{R}_0; N)}. \tag{2.50}
+\end{equation}
+Сходным образом если $A$ зависит от $\boldsymbol{R}_n$ и $\boldsymbol{R}_m$ (принимается, что $n > m$), то
+\begin{align}
+\langle A(\boldsymbol{R}_n, \boldsymbol{R}_m)\rangle &= \int\!\mathrm{d}\boldsymbol{R}_N\mathrm{d}\boldsymbol{R}_n\mathrm{d}\boldsymbol{R}_m\mathrm{d}\boldsymbol{R}_0\,G(\boldsymbol{R}_N, \boldsymbol{R}_n; N - n)G(\boldsymbol{R}_n, \boldsymbol{R}_m; n - m) \nonumber\\
+&\quad \times G(\boldsymbol{R}_m, \boldsymbol{R}_0; m)A(\boldsymbol{R}_n, \boldsymbol{R}_m)\times\left[\int\!\mathrm{d}\boldsymbol{R}_N\mathrm{d}\boldsymbol{R}_0\,G(\boldsymbol{R}_N, \boldsymbol{R}_0; N)\right]^{-1}. \tag{2.51}
+\end{align}
+
+Хотя функция Грина $G(\boldsymbol{R}, \boldsymbol{R}'; N)$ имеет физический смысл только для $N > 0$, удобно определить $G(\boldsymbol{R}, \boldsymbol{R}'; N)$ при $N < 0$ таким образом, что
+\begin{equation}
+G(\boldsymbol{R}, \boldsymbol{R}'; N) = 0 \quad \text{при } N < 0. \tag{2.52}
+\end{equation}
+При таком определении $G(\boldsymbol{R}, \boldsymbol{R}'; N)$ удовлетворяет простому дифференциальному уравнению
+\begin{equation}
+\left(\frac{\partial}{\partial N} - \frac{b^2}{6}\frac{\partial^2}{\partial\boldsymbol{R}^2} + \frac{1}{k_B T}U_e(\boldsymbol{R})\right)G(\boldsymbol{R}, \boldsymbol{R}'; N) = \delta(\boldsymbol{R} - \boldsymbol{R}')\delta(N). \tag{2.53}
+\end{equation}
+Вывод его дан в приложении~2.II. Произведение дельта-функций $\delta(\boldsymbol{R} - \boldsymbol{R}')\delta(N)$ в правой части учитывает граничные условия
+\begin{equation}
+G(\boldsymbol{R}, \boldsymbol{R}'; N) = 0 \quad \text{при } N < 0 \quad \text{и} \quad G(\boldsymbol{R}, \boldsymbol{R}'; N = 0) = \delta(\boldsymbol{R} - \boldsymbol{R}'). \tag{2.54}
+\end{equation}
+
+\subsubsection*{2.3.2. Пример: цепь в ящике}
+
+Как пример применения функции Грина рассмотрим полимерную цепь, заключенную в ящик объемом $V = L_x L_y L_z$ (рис.~2.6) [8]. Ограничение на конформацию цепи со стороны стенок описывается посредством внешнего потенциала $U_e$, который имеет бесконечную величину вне ящика и равен нулю внутри ящика. Другой способ состоит в описании с помощью граничного условия:
+\begin{equation}
+G(\boldsymbol{R}, \boldsymbol{R}'; N) = 0, \quad \text{если $\boldsymbol{R}$ находится на границе ящика.} \tag{2.55}
+\end{equation}
+Решение уравнения
+\begin{equation}
+\left(\frac{\partial}{\partial N} - \frac{b^2}{6}\frac{\partial^2}{\partial\boldsymbol{R}^2}\right)G(\boldsymbol{R}, \boldsymbol{R}'; N) = \delta(\boldsymbol{R} - \boldsymbol{R}')\delta(N) \tag{2.56}
+\end{equation}
+при граничном условии (2.55) находится стандартным методом [8]:
+\begin{equation}
+G(\boldsymbol{R}, \boldsymbol{R}'; N) = g_x(R_x, R_x'; N)g_y(R_y, R_y'; N)g_z(R_z, R_z'; N), \tag{2.57}
+\end{equation}
+где
+\begin{equation}
+g_x(R_x, R_x'; N) = \frac{2}{L_x}\sum_{p=1}^\infty \sin\left(\frac{p\pi R_x}{L_x}\right)\sin\left(\frac{p\pi R_x'}{L_x}\right)\exp\left(-\frac{p^2\pi^2 Nb^2}{6L_x^2}\right). \tag{2.58}
+\end{equation}
+Статистический вес тогда дается выражением
+\begin{equation}
+Z = \int\!\mathrm{d}\boldsymbol{R}\,\mathrm{d}\boldsymbol{R}'\,G(\boldsymbol{R}, \boldsymbol{R}'; N) = Z_x Z_y Z_z, \tag{2.59}
+\end{equation}
+где
+\begin{align}
+Z_x &= \int_0^{L_x}\!\mathrm{d}R_x\int_0^{L_x}\!\mathrm{d}R_x'\,g_x(R_x, R_x'; N) = \nonumber\\
+&= \frac{8}{\pi^2}L_x\sum_{p=1,3,\dots}^\infty \frac{1}{p^2}\exp\left[-\frac{\pi^2 Nb^2 p^2}{6L_x^2}\right]. \tag{2.60}
+\end{align}
+Свободная энергия системы рассчитывается по соотношению
+\begin{equation}
+A = -k_B T \ln Z, \tag{2.61}
+\end{equation}
+так что давление на стенку, перпендикулярную оси $x$, равно
+\begin{equation}
+P_x = -\frac{1}{L_y L_z}\frac{\partial A}{\partial L_x}. \tag{2.62}
+\end{equation}
+Рассмотрим два предельных случая:
+
+1) В случае когда полимерная цепь много меньше ящика (т.~е. $\sqrt{N}b \ll L_x, L_y, L_z$), $Z_x$ приближенно равно
+\begin{equation}
+Z_x \approx \frac{8}{\pi^2}L_x\sum_{p=1,3,\dots}\frac{1}{p^2} = L_x, \tag{2.63}
+\end{equation}
+откуда
+\begin{equation}
+P_x = \frac{k_B T}{L_x L_y L_z} = \frac{k_B T}{V} \quad \text{и аналогично} \quad P_y = P_z = \frac{k_B T}{V}, \tag{2.64}
+\end{equation}
+что просто является уравнением состояния идеального газа.
+
+2) В случае когда размеры полимерного клубка много больше размеров ящика (т.~е. $\sqrt{N}b \gg L_x, L_y, L_z$), $Z_x$ по преимуществу определяется первым слагаемым в сумме и
+\begin{equation}
+Z_x \approx \frac{8}{\pi^2}L_x\exp\left[-\frac{\pi^2 Nb^2}{6L_x^2}\right], \tag{2.65}
+\end{equation}
+что дает
+\begin{equation}
+P_x = -\frac{1}{L_y L_z}\frac{\partial A}{\partial L_x} = \frac{k_B T}{V}\left(1 + \frac{\pi^2 Nb^2}{3L_x^2}\right) \approx \frac{\pi^2 Nb^2}{3L_x^2}\frac{k_B T}{V}. \tag{2.66}
+\end{equation}
+Поскольку в этом случае $P_x$ не равно $P_y$ и $P_z$ (если только не выполнено условие $L_x = L_y = L_z$), то сила, действующая на стенки, не является изотропной. Позднее будет показано, что эта анизотропия давления, обусловленная анизотропией ограничений на цепь, ответственна за целый ряд механических свойств, специфичных для полимеров.
+
+Метод функции Грина применяется к различным задачам, связанным с полимерными цепями, которые находятся в неоднородных ситуациях (адсорбция полимерных молекул, цепи вблизи границы раздела фаз, полимерные молекулы в пористой среде и т.~д.). Много таких примеров можно найти в литературе [9, 10].
+
+\subsection*{2.5.2. МОДЕЛЬ ЦЕПИ С УЧЕТОМ ИСКЛЮЧЕННОГО ОБЪЕМА}
+
+В реальных полимерных цепях природа дальнего взаимодействия весьма сложна: оно включает стерические эффекты, силы притяжения Ван-дер-Ваальса, а также другие специфические взаимодействия, включающие молекулы растворителя. Однако, если речь идет о крупномасштабных свойствах, детали взаимодействия не существенны, важно лишь то, что эффект исключенного объема контролируется взаимодействием между удаленными частями цепи. Таким образом, взаимодействие между полимерными сегментами с номерами $n$ и $m$ может быть выражено функцией близкодействия в пространстве
+\begin{equation}
+k_B T \tilde{v}(\boldsymbol{R}_n - \boldsymbol{R}_m), \tag{2.85}
+\end{equation}
+которая в дальнейшем будет аппроксимироваться дельта-функцией [19]:
+\begin{equation}
+v k_B T\,\delta(\boldsymbol{R}_n - \boldsymbol{R}_m), \tag{2.86}
+\end{equation}
+где $v$ есть исключенный объем и имеет размерность объема\footnote{Читателя может беспокоить использование дельта-функции, которая расходится, когда $\boldsymbol{R}_n = \boldsymbol{R}_m$. Однако, как оказывается, все физически измеримые величины включают интегралы от такого рода потенциалов и обладают хорошими свойствами. (Абсолютная энтропия цепи, скажем, расходится, но разность энтропий, с которой имеют дело экспериментально, определяется вполне корректно.) Эта ситуация хорошо известна в квантовых теориях поля и подробно обсуждается в учебниках. Можно заверить читателя, что в этом пункте реальных трудностей не возникает.}.
+
+Тогда полная энергия взаимодействия запишется как
+\begin{equation}
+U_1 = \frac{1}{2}v k_B T\int_0^N\!\mathrm{d}n\int_0^N\!\mathrm{d}m\,\delta(\boldsymbol{R}_n - \boldsymbol{R}_m). \tag{2.87}
+\end{equation}
+Используя локальную концентрацию сегментов
+\begin{equation}
+c(\boldsymbol{r}) = \sum_n \delta(\boldsymbol{r} - \boldsymbol{R}_n) = \int_0^N\!\mathrm{d}n\,\delta(\boldsymbol{r} - \boldsymbol{R}_n), \tag{2.88}
+\end{equation}
+формулу (2.87) можно переписать в виде
+\begin{equation}
+U_1 = \int\!\mathrm{d}\boldsymbol{r}\,\frac{1}{2}v k_B T c(\boldsymbol{r})^2. \tag{2.89}
+\end{equation}
+Это выражение показывает, что (2.87) является первым членом вириального разложения свободной энергии по локальной концентрации $c(\boldsymbol{r})$. Поэтому параметр исключенного объема $v$ можно рассматривать как вириальный коэффициент взаимодействия между сегментами.
+
+В принципе это вириальное разложение можно продолжить, чтобы включить члены более высокого порядка, такие, как
+\begin{equation}
+U_1 = \int\!\mathrm{d}\boldsymbol{r}\left[\frac{1}{2}v k_B T c(\boldsymbol{r})^2 + \frac{1}{6}w k_B T c(\boldsymbol{r})^3 + \dots\right]. \tag{2.90}
+\end{equation}
+Однако членами более высокого порядка можно пренебречь, так как плотность сегментов внутри полимерного клубка мала: плотность сегментов оценивается как
+\begin{equation}
+\bar{c} \approx \frac{N}{R^3} \propto N^{1 - 3\nu} = N^{-4/5} \quad (\text{при } \nu = 3/5) \tag{2.91}
+\end{equation}
+и становится очень малой при больших $N$. Поэтому все существенные черты эффекта исключенного объема могут быть исследованы с помощью потенциала, даваемого выражением (2.87).
+
+Для выбранной комбинации полимера и растворителя $v$ меняется с температурой и может стать равным нулю при некоторой температуре $\Theta$, называемой также температурой Флори. При температуре $\Theta$ цепь становится близкой к идеальной\footnote{Даже при $\Theta$-температуре цепь не является идеальной, поскольку имеется член, соответствующий трехчастичным столкновениям [20, 21]. Однако эффект трехчастичных столкновений весьма слаб и дает только логарифмическую поправку к $\langle\boldsymbol{R}^2\rangle$.}.
+
+Оценить зависимость $v$ от температуры можно следующим образом. Предположим, что взаимодействие между сегментами описывается потенциальной энергией $u(\boldsymbol{r})$, зависящей только от расстояния между ними. Тогда второй вириальный коэффициент оценивается стандартной формулой для неидеального газа [22]:
+\begin{equation}
+v = \int\!\mathrm{d}\boldsymbol{r}\left[1 - \exp\left(-\frac{u(\boldsymbol{r})}{k_B T}\right)\right]. \tag{2.92}
+\end{equation}
+Обычно $u(\boldsymbol{r})$ состоит из потенциала твердого ядра $u_{\mathrm{hard}}(\boldsymbol{r})$ и слабого потенциала притяжения $u_{\mathrm{attr}}(\boldsymbol{r})$ (рис.~2.8). В таком случае $v$ оценивается соотношением
+\begin{equation}
+v = \int\!\mathrm{d}\boldsymbol{r}\left[1 - \exp\left(-\frac{u_{\mathrm{hard}}(\boldsymbol{r})}{k_B T}\right)\left(1 - \frac{u_{\mathrm{attr}}(\boldsymbol{r})}{k_B T}\right)\right] = A - \frac{B}{T}, \tag{2.93}
+\end{equation}
+где $A$ и $B$ являются константами, не зависящими от температуры. Для такой модели $\Theta$-температура определяется как $B/A$, а формулу (2.93) можно записать в виде [16]
+\begin{equation}
+v = v^{(0)}\left(1 - \frac{\Theta}{T}\right). \tag{2.94}
+\end{equation}
+
+Теперь если учесть взаимодействие, описываемое формулой (2.87), функция распределения для $\boldsymbol{R}_n$ становится равной
+\begin{equation}
+\Psi[\boldsymbol{R}_n] \propto \exp\left[-\frac{3}{2b^2}\int_0^N\!\mathrm{d}n\left(\frac{\partial\boldsymbol{R}_n}{\partial n}\right)^2 - \frac{1}{2}v\int_0^N\!\mathrm{d}n\int_0^N\!\mathrm{d}m\,\delta(\boldsymbol{R}_n - \boldsymbol{R}_m)\right]. \tag{2.95}
+\end{equation}
+Эта модель включает только два параметра: $b$, который представляет взаимодействие между близко расположенными вдоль цепи сегментами, и $v$, описывающий взаимодействие далеко отстоящих друг от друга по цепи сегментов. Основным допущением такой двухпараметрической модели является представление о существовании резкого отличия между указанными мелко- и крупномасштабным взаимодействиями. Хотя справедливость этого допущения и может подвергаться сомнению, как в работе [23], обычно считается, что оно является хорошей отправной точкой для анализа проблемы исключенного объема.
+
+\subsubsection*{2.5.3. ТЕОРЕТИЧЕСКИЕ ПОДХОДЫ}
+
+Обсудим теперь статистические свойства цепи, описываемой формулой (2.95). Ограничимся обсуждением случая $v > 0$, т.~е. случаем, когда преобладает отталкивание. Случаи $v = 0$ и $v < 0$ обсуждаются в работах [24, 25].
+
+\textit{Упрощенная теория.} Оригинальная идея Флори [15] при расчете размеров полимерной цепи состояла в том, чтобы учесть баланс двух эффектов: разбухания полимерной молекулы, обусловленного преобладанием отталкивания при взаимодействиях типа исключенного объема \dots
+
+\textit{Теория среднего поля.} Упрощенная теория, рассмотренная в первой части этого раздела, может быть усовершенствована с использованием расчетов, основанных на понятии среднего поля [41]. Рассмотрим ансамбль цепей, концы которых фиксированы в пространстве: один в начале координат, а другой~--- в точке $\boldsymbol{R}$. Пусть $\bar{c}(\boldsymbol{r})$ есть средняя плотность сегментов в точке $\boldsymbol{r}$:
+\begin{equation}
+\bar{c}(\boldsymbol{r}) = \int_0^N\!\mathrm{d}n\,\langle\delta(\boldsymbol{r} - \boldsymbol{R}_n)\rangle. \tag{2.114}
+\end{equation}
+Тогда сегмент в точке $\boldsymbol{r}$ находится под воздействием потенциала среднего поля $\bar{c}(\boldsymbol{r})vk_B T$, а, следовательно, статистическое распределение для рассматриваемой полимерной цепи приобретает вид
+\begin{equation}
+\Psi_{\mathrm{MF}}[\boldsymbol{R}_n] \propto \exp\left[-\frac{3}{2b^2}\int_0^N\!\mathrm{d}n\left(\frac{\partial\boldsymbol{R}_n}{\partial n}\right)^2 - v\int_0^N\!\mathrm{d}n\,\bar{c}(\boldsymbol{R}_n)\right]. \tag{2.115}
+\end{equation}
+Для такой функции распределения функция Грина $G(\boldsymbol{R}, 0, n)$ рассчитывается из уравнения (см. уравнение (2.53))
+\begin{equation}
+\left[\frac{\partial}{\partial n} - \frac{b^2}{6}\frac{\partial^2}{\partial\boldsymbol{R}^2} + v\bar{c}(\boldsymbol{R})\right]G(\boldsymbol{R}, 0, n) = \delta(\boldsymbol{R})\delta(n). \tag{2.116}
+\end{equation}
+Если $G(\boldsymbol{R}, 0, n)$ найдена, то плотность сегментов $\bar{c}(\boldsymbol{r})$ рассчитывается как
+\begin{equation}
+\bar{c}(\boldsymbol{r}) = \frac{1}{G(\boldsymbol{R}, 0, N)}\int_0^N\!\mathrm{d}n\,G(\boldsymbol{R}, \boldsymbol{r}, N - n)G(\boldsymbol{r}, 0, n). \tag{2.117}
+\end{equation}
+Уравнения (2.116) и (2.117) образуют замкнутую систему для нахождения $G(\boldsymbol{R}, 0, N)$. Теория включает в себя достаточно громоздкие расчеты, но на ее основе могут быть предсказаны многие интересные черты поведения цепи с учетом исключенного объема. Показано, например, что структурный фактор $g(k)$ в области высоких значений $k$ имеет вид
+\begin{equation}
+g(k) \propto k^{-5/3} \quad \text{при } kR_g \gg 1, \tag{2.118}
+\end{equation}
+что можно получить также на основе модели однородного растяжения. Космас и Фрид [42] дополнили эту модель учетом флуктуаций, но, как оказалось, это не изменяет существенно основных результатов.
+
+\textit{Теория ренормализационной группы.} Теория среднего поля пренебрегает тем обстоятельством, что столкновения между сегментами в полимерной молекуле сильно коррелированы: весьма вероятно, что столкновение любой пары сегментов вызовет другие столкновения, поскольку эти сегменты связаны цепью. Чтобы учесть эту коррелированность, к рассмотрению полимерных задач был применен метод ренормализационной группы, разработанный при изучении критических явлений. Этот метод, первоначально введенный Вильсоном [43], к полимерным проблемам впервые был применен де Женом [44] и де Клуазо [45].
+
+Особенно отчетливо основной результат формулируется Вильсоном и Фишером [46], заметившими, что в пространствах высокой размерности эффект корреляций становится слабым и применимым становится простое разложение по теории возмущений. Например, если проблема исключенного объема рассматривается для полимерной цепи, помещенной в $d$-мерное евклидово пространство, то параметр разложения $z$, равный $N^2 v / (\sqrt{N}b)^d \propto N^{(4-d)/2}$, становится малым для больших $N$, если $d > 4$. (Размерность 4 называют критической размерностью.) Таким образом удается разработать схему разложения, используя в качестве малого параметра $\varepsilon = 4 - d$. Такая схема дает выражение для $\nu$ вида
+\begin{equation}
+\nu = \frac{1}{2}\left(1 + \frac{1}{8}\varepsilon + \frac{15}{256}\varepsilon^2 \dots\right). \tag{2.119}
+\end{equation}
+При $d = 3$ эта формула дает $\nu = 0{,}592$, достаточно близкое к более точному результату [36, 38] $\nu = 0{,}588 \pm 0{,}001$. В любом случае отклонения этих показателей от $0{,}6$ весьма малы.
+
+Реальные методы расчета в теории ренормализационной группы весьма сложны и многообразны. Детали можно найти в работах [18, 45, 47, 48].
+
+\section*{2.I.4. ФУНКЦИОНАЛЬНЫЙ ИНТЕГРАЛ}
+
+Если нижний индекс $n$ у $x_n$ рассматривать как непрерывную переменную, то набор точек $(x_1, x_2, \dots, x_N)$ будет представлять собой непрерывную функцию, а интеграл по набору $(x_1, x_2, \dots, x_N)$ сведется к интегрированию по всем возможным функциям; он называется функциональным интегралом и обозначается символом $\delta x_n$, т.~е.
+\begin{equation*}
+\int\!\prod_n \mathrm{d}x_n \;\xrightarrow[\text{непрерывный предел}]{}\; \int\!\delta x_n.
+\end{equation*}
+Подынтегральное выражение в функциональном интеграле получается путем предельного перехода от дискретных переменных к непрерывным. Например, в качестве обобщения соотношения (2.I.16) мы имеем
+\begin{align}
+\int\!\delta x_n \exp\left[-\frac{1}{2}\int_0^N\!\mathrm{d}n\int_0^N\!\mathrm{d}m\,A_{nm}x_n x_m + \int_0^N\!\mathrm{d}n\,\xi_n x_n\right] \propto \nonumber\\
+\propto \exp\left[\max\left(-\frac{1}{2}\int_0^N\!\mathrm{d}n\int_0^N\!\mathrm{d}m\,A_{nm}x_n x_m + \int_0^N\!\mathrm{d}n\,\xi_n x_n\right)\right] \tag{2.I.32}
+\end{align}
+или
+\begin{equation}
+\left\langle\exp\left[\int_0^N\!\mathrm{d}n\,\xi_n x_n\right]\right\rangle = \exp\left[\frac{1}{2}\int_0^N\!\mathrm{d}n\int_0^N\!\mathrm{d}m\,(A^{-1})_{nm}\xi_n \xi_m\right], \tag{2.I.33}
+\end{equation}
+где
+\begin{equation}
+\int_0^N\!\mathrm{d}m\,(A^{-1})_{nm}A_{mj} = \delta(n - j). \tag{2.I.34}
+\end{equation}
+
+\section*{ПРИЛОЖЕНИЕ 2.II. ДИФФЕРЕНЦИАЛЬНОЕ УРАВНЕНИЕ ДЛЯ $G(\boldsymbol{R}, \boldsymbol{R}'; N)$}
+
+В случае $U_e = 0$ функция $G(\boldsymbol{R}, \boldsymbol{R}'; N)$ становится распределением вероятностей для вектора между концами и имеет вид
+\begin{equation}
+G_0(\boldsymbol{R} - \boldsymbol{R}'; N) = \left(\frac{2\pi Nb^2}{3}\right)^{-3/2}\exp\left(-\frac{3(\boldsymbol{R} - \boldsymbol{R}')^2}{2Nb^2}\right)\Theta(N), \tag{2.II.1}
+\end{equation}
+где
+\begin{equation}
+\Theta(N) = \begin{cases} 1, & N > 0, \\ 0, & N < 0. \end{cases} \tag{2.II.2}
+\end{equation}
+Воспользовавшись преобразованием Фурье (см. уравнение (2.25))
+\begin{equation}
+G_0(\boldsymbol{R} - \boldsymbol{R}'; N) = \int\!\frac{\mathrm{d}\boldsymbol{k}}{(2\pi)^3}\exp(-i\boldsymbol{k}\cdot(\boldsymbol{R} - \boldsymbol{R}'))\exp\left(-\frac{Nb^2 k^2}{6}\right)\Theta(N), \tag{2.II.3}
+\end{equation}
+можно легко убедиться в том, что
+\begin{align}
+\frac{\partial}{\partial N}G_0(\boldsymbol{R} - \boldsymbol{R}'; N) &= \int\!\frac{\mathrm{d}\boldsymbol{k}}{(2\pi)^3}\exp(-i\boldsymbol{k}\cdot(\boldsymbol{R} - \boldsymbol{R}'))\left[-\frac{b^2 k^2}{6}\exp\left(-\frac{Nb^2 k^2}{6}\right)\Theta(N) + \delta(N)\right] = \nonumber\\
+&= \frac{b^2}{6}\frac{\partial^2}{\partial\boldsymbol{R}^2}G_0(\boldsymbol{R} - \boldsymbol{R}'; N) + \delta(\boldsymbol{R} - \boldsymbol{R}')\delta(N). \tag{2.II.4}
+\end{align}
+Чтобы вывести уравнение для $G(\boldsymbol{R}, \boldsymbol{R}'; N)$ при $U_e \ne 0$, воспользуемся соотношением (2.49) при малых $\Delta N$:
+\begin{equation}
+G(\boldsymbol{R}, \boldsymbol{R}'; N + \Delta N) = \int\!\mathrm{d}\boldsymbol{R}''\,G(\boldsymbol{R}, \boldsymbol{R}''; \Delta N)G(\boldsymbol{R}'', \boldsymbol{R}'; N). \tag{2.II.5}
+\end{equation}
+При $n$, лежащих между $N$ и $N + \Delta N$, $\boldsymbol{R}_n$ не может находиться далеко от $\boldsymbol{R}$. Поэтому, если $U_e(\boldsymbol{r})$ является гладкой функцией $\boldsymbol{r}$, энергия может быть приближенно выражена в виде
+\begin{equation}
+\int_N^{N+\Delta N}\!\mathrm{d}n\,U_e(\boldsymbol{R}_n) \approx \Delta N\,U_e(\boldsymbol{R}). \tag{2.II.6}
+\end{equation}
+Тогда $G(\boldsymbol{R}, \boldsymbol{R}''; \Delta N)$ легко найти, используя выражение (2.46),
+\begin{equation}
+G(\boldsymbol{R}, \boldsymbol{R}''; \Delta N) = \exp\left(-\frac{1}{k_B T}\Delta N\,U_e(\boldsymbol{R})\right)G_0(\boldsymbol{R} - \boldsymbol{R}''; \Delta N). \tag{2.II.7}
+\end{equation}
+Согласно формулам (2.II.5) и (2.II.7), имеем
+\begin{align}
+G(\boldsymbol{R}, \boldsymbol{R}'; N + \Delta N) &= \exp\left(-\frac{1}{k_B T}\Delta N\,U_e(\boldsymbol{R})\right)\times \nonumber\\
+&\quad \times \int\!\mathrm{d}\boldsymbol{R}''\,G_0(\boldsymbol{R} - \boldsymbol{R}''; \Delta N)G(\boldsymbol{R}'', \boldsymbol{R}'; N). \tag{2.II.8}
+\end{align}
+При малых $\Delta N$ $G_0(\boldsymbol{R} - \boldsymbol{R}''; \Delta N)$ имеет острый пик при $\boldsymbol{R} = \boldsymbol{R}''$. Поэтому интеграл в формуле (2.II.8) можно оценить, разлагая $G(\boldsymbol{R}'', \boldsymbol{R}'; N)$ в ряд по $\boldsymbol{r} \equiv \boldsymbol{R} - \boldsymbol{R}''$:
+\begin{align}
+I &= \int\!\mathrm{d}\boldsymbol{R}''\,G_0(\boldsymbol{R} - \boldsymbol{R}''; \Delta N)G(\boldsymbol{R}'', \boldsymbol{R}'; N) = \nonumber\\
+&= \int\!\mathrm{d}\boldsymbol{r}\,G_0(\boldsymbol{r}; \Delta N)G(\boldsymbol{R} - \boldsymbol{r}, \boldsymbol{R}'; N) = \nonumber\\
+&= \int\!\mathrm{d}\boldsymbol{r}\,G_0(\boldsymbol{r}; \Delta N)\left(1 - r_\alpha\frac{\partial}{\partial R_\alpha} + \frac{1}{2}r_\alpha r_\beta \frac{\partial^2}{\partial R_\alpha \partial R_\beta}\right)G(\boldsymbol{R}, \boldsymbol{R}'; N). \tag{2.II.9}
+\end{align}
+Так как
+\begin{equation}
+\int\!\mathrm{d}\boldsymbol{r}\,G_0(\boldsymbol{r}; \Delta N)r_\alpha = 0, \quad \int\!\mathrm{d}\boldsymbol{r}\,G_0(\boldsymbol{r}; \Delta N)r_\alpha r_\beta = \Delta N\frac{b^2}{3}\delta_{\alpha\beta}, \tag{2.II.10}
+\end{equation}
+то интеграл становится равным
+\begin{equation}
+I = \left(1 + \frac{1}{6}\Delta Nb^2 \frac{\partial^2}{\partial\boldsymbol{R}^2}\right)G(\boldsymbol{R}, \boldsymbol{R}'; N). \tag{2.II.11}
+\end{equation}
+Таким образом, с точностью до первого порядка по $\Delta N$ уравнение (2.II.8) запишется как
+\begin{align}
+\left(1 + \Delta N\frac{\partial}{\partial N}\right)G(\boldsymbol{R}, \boldsymbol{R}'; N) &= \left(1 - \frac{1}{k_B T}\Delta N\,U_e(\boldsymbol{R})\right)\times \nonumber\\
+&\quad \times \left(1 + \frac{1}{6}\Delta Nb^2\frac{\partial^2}{\partial\boldsymbol{R}^2}\right)G(\boldsymbol{R}, \boldsymbol{R}'; N). \tag{2.II.12}
+\end{align}
+Сравнивая члены порядка $\Delta N$, получаем
+\begin{equation}
+\left(\frac{\partial}{\partial N} - \frac{b^2}{6}\frac{\partial^2}{\partial\boldsymbol{R}^2} + \frac{1}{k_B T}U_e(\boldsymbol{R})\right)G(\boldsymbol{R}, \boldsymbol{R}'; N) = 0. \tag{2.II.13}
+\end{equation}
+Это уравнение справедливо при $N > 0$. Чтобы учесть сингулярность при $N = 0$, используем выражение (2.II.7) для малых $N$, т.~е.
+\begin{equation}
+G(\boldsymbol{R}, \boldsymbol{R}'; N) = \exp\left(\frac{-1}{k_B T}N U_e(\boldsymbol{R})\right)G_0(\boldsymbol{R} - \boldsymbol{R}'; N), \tag{2.II.14}
+\end{equation}
+что и дает $\delta(\boldsymbol{R} - \boldsymbol{R}')\delta(N)$ в правой части формулы (2.53).
+
+\section*{ПРИЛОЖЕНИЕ 2.III. РАСЧЕТ ЭФФЕКТА ИСКЛЮЧЕННОГО ОБЪЕМА ПО ТЕОРИИ ВОЗМУЩЕНИЙ}
+
+Пусть $\langle\dots\rangle_0$ обозначает среднее по функции распределения идеальной цепи; тогда для цепи с исключенным объемом
+\begin{equation}
+\langle\boldsymbol{R}^2\rangle = \frac{\langle\exp(-U_1)(\boldsymbol{R}_N - \boldsymbol{R}_0)^2\rangle_0}{\langle\exp(-U_1)\rangle_0}, \tag{2.III.1}
+\end{equation}
+где
+\begin{equation}
+U_1 = v\int_0^N\!\mathrm{d}m\int_0^m\!\mathrm{d}n\,\delta(\boldsymbol{R}_n - \boldsymbol{R}_m) \tag{2.III.2}
+\end{equation}
+(здесь $k_B T$ положено равным единице). Сначала рассчитаем
+\begin{align}
+\langle\boldsymbol{R}^2\rangle &= \frac{\langle(1 - U_1)(\boldsymbol{R}_N - \boldsymbol{R}_0)^2\rangle_0}{\langle 1 - U_1\rangle_0} = \nonumber\\
+&= \langle(\boldsymbol{R}_N - \boldsymbol{R}_0)^2\rangle_0(1 + \langle U_1\rangle_0) - \langle U_1(\boldsymbol{R}_N - \boldsymbol{R}_0)^2\rangle_0 = \nonumber\\
+&= Nb^2\left(1 + v\int_0^N\!\mathrm{d}m\int_0^m\!\mathrm{d}n\,\langle\delta(\boldsymbol{R}_n - \boldsymbol{R}_m)\rangle_0\right) - \nonumber\\
+&\quad - v\int_0^N\!\mathrm{d}m\int_0^m\!\mathrm{d}n\,\langle\delta(\boldsymbol{R}_n - \boldsymbol{R}_m)(\boldsymbol{R}_N - \boldsymbol{R}_0)^2\rangle_0. \tag{2.III.3}
+\end{align}
+\begin{equation}
+I = \langle\delta(\boldsymbol{R}_n - \boldsymbol{R}_m)(\boldsymbol{R}_N - \boldsymbol{R}_0)^2\rangle_0, \tag{2.III.4}
+\end{equation}
+что с использованием функции Грина $G_0(\boldsymbol{R}, \boldsymbol{R}'; N)$ для свободного пространства (см. уравнения (2.50) и (2.51)) запишется в виде
+\begin{align}
+I &= \int\!\mathrm{d}\boldsymbol{R}_N\mathrm{d}\boldsymbol{R}_m\mathrm{d}\boldsymbol{R}_n\mathrm{d}\boldsymbol{R}_0\,G_0(\boldsymbol{R}_N - \boldsymbol{R}_m; N - m)\times \nonumber\\
+&\quad \times G_0(\boldsymbol{R}_m - \boldsymbol{R}_n; m - n)G_0(\boldsymbol{R}_n - \boldsymbol{R}_0; n)\delta(\boldsymbol{R}_n - \boldsymbol{R}_m)(\boldsymbol{R}_N - \boldsymbol{R}_0)^2 = \nonumber\\
+&= \int\!\mathrm{d}\boldsymbol{R}_N\mathrm{d}\boldsymbol{R}_n\mathrm{d}\boldsymbol{R}_0\,G_0(\boldsymbol{R}_N - \boldsymbol{R}_n; N - m)G_0(0; m - n)\times \nonumber\\
+&\quad \times G_0(\boldsymbol{R}_n - \boldsymbol{R}_0; n)(\boldsymbol{R}_N - \boldsymbol{R}_0)^2. \tag{2.III.5}
+\end{align}
+Чтобы взять этот интеграл, запишем $\boldsymbol{R}_N - \boldsymbol{R}_0$ как $(\boldsymbol{R}_N - \boldsymbol{R}_n) - (\boldsymbol{R}_n - \boldsymbol{R}_0)$ и проинтегрируем вначале по $\boldsymbol{R}_N$, а затем по $\boldsymbol{R}_n$. В результате получим
+\begin{equation}
+I = G_0(0; m - n)(N - m + n)b^2. \tag{2.III.6}
+\end{equation}
+Следовательно,
+\begin{equation}
+\langle U_1(\boldsymbol{R}_N - \boldsymbol{R}_0)^2\rangle_0 = v\int_0^N\!\mathrm{d}m\int_0^m\!\mathrm{d}n\,(N - m + n)b^2 G_0(0; m - n). \tag{2.III.7}
+\end{equation}
+Аналогично
+\begin{equation}
+\langle U_1\rangle_0 = v\int_0^N\!\mathrm{d}m\int_0^m\!\mathrm{d}n\,G_0(0; m - n). \tag{2.III.8}
+\end{equation}
+Интегралы в выражениях (2.III.7) и (2.III.8) расходятся, но расходящиеся члены сокращаются друг с другом в формуле для $\langle\boldsymbol{R}^2\rangle$. В конечном счете из соотношений (2.III.3), (2.III.7) и (2.III.8) мы имеем выражение
+\begin{align}
+\langle\boldsymbol{R}^2\rangle &= Nb^2\left(1 + v\int_0^N\!\mathrm{d}m\int_0^m\!\mathrm{d}n\,G_0(0; m - n)(m - n)\right) = \nonumber\\
+&= Nb^2\left(1 + v\int_0^N\!\mathrm{d}m\int_0^m\!\mathrm{d}n\left(\frac{3}{2\pi(m - n)b^2}\right)^{3/2}(m - n)\right), \tag{2.III.9}
+\end{align}
+которое сходится и дает первый член в формуле (2.100).
+
+Затем выведем формулу (2.108). Интеграл, который мы должны теперь оценить, имеет вид
+\begin{equation}
+J = \left\langle\left(\frac{\partial\boldsymbol{R}_n}{\partial n}\right)^2(\boldsymbol{R}_N - \boldsymbol{R}_0)^2\right\rangle'. \tag{2.III.10}
+\end{equation}
+Чтобы вычислить его, заменим $\partial\boldsymbol{R}_n/\partial n$ на $\boldsymbol{R}_n - \boldsymbol{R}_{n-1}$ и перепишем $\boldsymbol{R}_N - \boldsymbol{R}_0$ как
+\begin{equation}
+\boldsymbol{R}_N - \boldsymbol{R}_0 = (\boldsymbol{R}_N - \boldsymbol{R}_n) + (\boldsymbol{R}_n - \boldsymbol{R}_{n-1}) + (\boldsymbol{R}_{n-1} - \boldsymbol{R}_0). \tag{2.III.11}
+\end{equation}
+Так как корреляция между $\boldsymbol{R}_N - \boldsymbol{R}_n$, $\boldsymbol{R}_n - \boldsymbol{R}_{n-1}$ и $\boldsymbol{R}_{n-1} - \boldsymbol{R}_0$ отсутствует, выражение (2.III.10) приобретает вид
+\begin{align}
+J &= \langle(\boldsymbol{R}_n - \boldsymbol{R}_{n-1})^2\rangle'\langle(\boldsymbol{R}_N - \boldsymbol{R}_n)^2\rangle' + \langle(\boldsymbol{R}_n - \boldsymbol{R}_{n-1})^4\rangle' + \nonumber\\
+&\quad + \langle(\boldsymbol{R}_n - \boldsymbol{R}_{n-1})^2\rangle'\langle(\boldsymbol{R}_{n-1} - \boldsymbol{R}_0)^2\rangle'. \tag{2.III.12}
+\end{align}
+Поскольку $\langle(\boldsymbol{R}_m - \boldsymbol{R}_n)^2\rangle' = (m - n)b'^2$ и $\langle(\boldsymbol{R}_m - \boldsymbol{R}_n)^4\rangle' = 5/3(m - n)^2 b'^4$, то уравнение (2.III.12) принимает вид
+\begin{equation}
+J = Nb'^4 + \frac{2}{3}b'^4, \tag{2.III.13}
+\end{equation}
+что и дает выражение (2.108).
+
+\end{document}
